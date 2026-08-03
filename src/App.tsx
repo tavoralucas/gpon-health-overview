@@ -154,6 +154,7 @@ const App = () => (
             <Route path="/novidades" element={<Novidades />} />
             <Route path="/novidades/:slug" element={<NovidadesMes />} />
           </Route>
+          <Route path="/nova-solicitacao" element={<NovaSolicitacao />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
