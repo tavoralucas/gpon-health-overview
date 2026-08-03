@@ -116,7 +116,9 @@ const dispositivosConectados = [
 
 type ModalView = "table" | "topology";
 
-const TopologyView = () => (
+const TopologyView = () => {
+  const { t } = useTranslation();
+  return (
   <div className="flex flex-col gap-6">
     {/* Diagram */}
     <div className="relative flex justify-center overflow-x-auto">
