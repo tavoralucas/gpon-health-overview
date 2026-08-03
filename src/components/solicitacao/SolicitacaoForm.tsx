@@ -20,6 +20,11 @@ import {
 import { ImageDropzone } from "./ImageDropzone";
 import { AREAS, solicitacaoSchema, type SolicitacaoFormValues } from "./schema";
 import { enviarSolicitacao } from "@/services/solicitacao";
+import {
+  SolicitacaoConfirmacao,
+  type SolicitacaoResumo,
+} from "./SolicitacaoConfirmacao";
+
 
 const defaultValues: Partial<SolicitacaoFormValues> = {
   nome: "",
