@@ -74,6 +74,7 @@ import {
 import Novidades from "./pages/Novidades";
 import NovidadesMes from "./pages/novidades/NovidadesMes";
 import NotFound from "./pages/NotFound";
+import NovaSolicitacao from "./pages/NovaSolicitacao";
 
 const queryClient = new QueryClient();
 
