@@ -90,7 +90,8 @@ const SpeedGauge = ({ value, label, contratual, color }: { value: string; label:
       <p className="text-sm font-semibold" style={{ color }}>{contratual}</p>
     </div>
   </div>
-);
+  );
+};
 
 const dispositivosConectados = [
   {
