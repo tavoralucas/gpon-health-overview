@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Send } from "lucide-react";
 import { toast } from "sonner";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +20,11 @@ import {
 import { ImageDropzone } from "./ImageDropzone";
 import { AREAS, solicitacaoSchema, type SolicitacaoFormValues } from "./schema";
 import { enviarSolicitacao } from "@/services/solicitacao";
+import {
+  SolicitacaoConfirmacao,
+  type SolicitacaoResumo,
+} from "./SolicitacaoConfirmacao";
+
 
 const defaultValues: Partial<SolicitacaoFormValues> = {
   nome: "",
@@ -40,6 +47,8 @@ export function SolicitacaoForm() {
     defaultValues: defaultValues as SolicitacaoFormValues,
   });
 
+  const [resumo, setResumo] = useState<SolicitacaoResumo | null>(null);
+
   const imagem = watch("imagem") ?? null;
   const area = watch("area");
 
@@ -53,6 +62,16 @@ export function SolicitacaoForm() {
         imagem: values.imagem ?? null,
       });
       toast.success("Solicitação enviada com sucesso.");
+      setResumo({
+        nome: values.nome,
+        area: values.area,
+        titulo: values.titulo,
+        texto: values.texto,
+        imagem: values.imagem
+          ? { name: values.imagem.name, size: values.imagem.size }
+          : null,
+        enviadaEm: new Date(),
+      });
       reset(defaultValues as SolicitacaoFormValues);
     } catch (error) {
       toast.error(
@@ -62,6 +81,17 @@ export function SolicitacaoForm() {
       );
     }
   };
+
+  if (resumo) {
+    return (
+      <SolicitacaoConfirmacao
+        resumo={resumo}
+        onNovaSolicitacao={() => setResumo(null)}
+      />
+    );
+  }
+
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
