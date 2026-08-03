@@ -23,3 +23,10 @@ Página independente em `/nova-solicitacao` (sem header/sidebar), fundo branco, 
 - Componentes: `src/pages/NovaSolicitacao.tsx` (tela), `src/components/solicitacao/SolicitacaoForm.tsx` (formulário) e `src/components/solicitacao/ImageDropzone.tsx` (upload com drag-and-drop).
 - Rota adicionada em `src/App.tsx` fora do `AppLayout`.
 - Toasts via sonner (já montado no App); ícones Lucide; animações com as utilidades existentes (`animate-fade-in`, `animate-scale-in`).
+
+## Correções prévias (erros de build já existentes)
+
+Antes da nova tela, corrigir erros de TypeScript que já estão no projeto e impedem o build:
+
+- `src/pages/ClienteDetalhe.tsx`: `useTranslation` é importado mas `t` nunca é obtido — adicionar `const { t } = useTranslation();` no componente.
+- `src/pages/cost-management/ConsolidadoFaturamentoCostManagement.tsx` e `ExportarRelatoriosCostManagement.tsx`: referências a imagens (`consolidadoFaturamentoTela`, `exportarRelatoriosTela`) sem import — restaurar os imports dos assets correspondentes ou remover as referências.
