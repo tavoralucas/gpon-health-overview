@@ -57,6 +57,7 @@ const clienteData = {
 };
 
 const QoSValue = ({ value, label }: { value: string; label: string }) => {
+  const { t } = useTranslation();
   const num = parseFloat(value);
   const color = num === 0 ? "text-[hsl(0,72%,51%)]" : num < 6 ? "text-[hsl(0,72%,51%)]" : "text-[hsl(158,64%,40%)]";
   return (
@@ -70,7 +71,9 @@ const QoSValue = ({ value, label }: { value: string; label: string }) => {
   );
 };
 
-const SpeedGauge = ({ value, label, contratual, color }: { value: string; label: string; contratual: string; color: string }) => (
+const SpeedGauge = ({ value, label, contratual, color }: { value: string; label: string; contratual: string; color: string }) => {
+  const { t } = useTranslation();
+  return (
   <div className="flex flex-col items-center gap-1">
     <div
       className="relative flex h-20 w-20 items-center justify-center rounded-full border-[6px]"
@@ -87,7 +90,8 @@ const SpeedGauge = ({ value, label, contratual, color }: { value: string; label:
       <p className="text-sm font-semibold" style={{ color }}>{contratual}</p>
     </div>
   </div>
-);
+  );
+};
 
 const dispositivosConectados = [
   {
@@ -112,7 +116,9 @@ const dispositivosConectados = [
 
 type ModalView = "table" | "topology";
 
-const TopologyView = () => (
+const TopologyView = () => {
+  const { t } = useTranslation();
+  return (
   <div className="flex flex-col gap-6">
     {/* Diagram */}
     <div className="relative flex justify-center overflow-x-auto">
@@ -205,7 +211,8 @@ const TopologyView = () => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const ClienteDetalhe = () => {
   const navigate = useNavigate();

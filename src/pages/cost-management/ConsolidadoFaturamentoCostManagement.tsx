@@ -1,6 +1,7 @@
 import { ArrowLeft, BarChart2, RefreshCw, X, Info, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import consolidadoFaturamentoTela from "@/assets/consolidado-faturamento-tela.png";
 
 
 export default function ConsolidadoFaturamentoCostManagement() {

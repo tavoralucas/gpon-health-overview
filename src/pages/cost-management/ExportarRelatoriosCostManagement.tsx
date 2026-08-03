@@ -1,6 +1,7 @@
 import { ArrowLeft, Download, FileText, Clock, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "@/hooks/useTranslation";
+import exportarRelatoriosTela from "@/assets/exportar-relatorios-tela.png";
 
 
 export default function ExportarRelatoriosCostManagement() {
