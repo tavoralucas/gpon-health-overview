@@ -57,6 +57,7 @@ const clienteData = {
 };
 
 const QoSValue = ({ value, label }: { value: string; label: string }) => {
+  const { t } = useTranslation();
   const num = parseFloat(value);
   const color = num === 0 ? "text-[hsl(0,72%,51%)]" : num < 6 ? "text-[hsl(0,72%,51%)]" : "text-[hsl(158,64%,40%)]";
   return (
