@@ -71,7 +71,9 @@ const QoSValue = ({ value, label }: { value: string; label: string }) => {
   );
 };
 
-const SpeedGauge = ({ value, label, contratual, color }: { value: string; label: string; contratual: string; color: string }) => (
+const SpeedGauge = ({ value, label, contratual, color }: { value: string; label: string; contratual: string; color: string }) => {
+  const { t } = useTranslation();
+  return (
   <div className="flex flex-col items-center gap-1">
     <div
       className="relative flex h-20 w-20 items-center justify-center rounded-full border-[6px]"
