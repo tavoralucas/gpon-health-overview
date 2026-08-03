@@ -211,7 +211,8 @@ const TopologyView = () => {
       </div>
     </div>
   </div>
-);
+  );
+};
 
 const ClienteDetalhe = () => {
   const navigate = useNavigate();
