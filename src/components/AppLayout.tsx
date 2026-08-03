@@ -1,4 +1,4 @@
-import claroLogo from "@/assets/claro-cloud-logo.png.asset.json";
+import claroLogo from "@/assets/claro-logo.png.asset.json";
 import { Outlet } from "react-router-dom";
 
 export default function AppLayout() {
