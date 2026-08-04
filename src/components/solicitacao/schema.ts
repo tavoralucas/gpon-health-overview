@@ -1,24 +1,18 @@
 import { z } from "zod";
 import { ACCEPTED_TYPES, MAX_FILE_SIZE } from "./ImageDropzone";
 
-export const AREAS = [
-  "Comercial",
-  "Produto",
-  "Tecnologia",
-  "Financeiro",
-  "Marketing",
-  "Operações",
-  "RH",
-  "Outro",
-] as const;
-
 export const solicitacaoSchema = z.object({
   nome: z
     .string()
     .trim()
     .min(1, { message: "Informe seu nome." })
     .max(100, { message: "O nome deve ter no máximo 100 caracteres." }),
-  area: z.enum(AREAS, { errorMap: () => ({ message: "Selecione uma área." }) }),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "Informe seu e-mail." })
+    .email({ message: "Informe um e-mail válido." })
+    .max(255, { message: "O e-mail deve ter no máximo 255 caracteres." }),
   titulo: z
     .string()
     .trim()
