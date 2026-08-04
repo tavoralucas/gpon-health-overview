@@ -1,4 +1,4 @@
-import { N8N_WEBHOOK_URL } from "@/config/webhook";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface SolicitacaoPayload {
   nome: string;
@@ -18,13 +18,15 @@ export async function enviarSolicitacao(payload: SolicitacaoPayload): Promise<vo
     formData.append("imagem", payload.imagem, payload.imagem.name);
   }
 
-  // Não definir Content-Type manualmente: o browser adiciona o boundary correto.
-  const response = await fetch(N8N_WEBHOOK_URL, {
-    method: "POST",
+  // Enviado através do backend para evitar bloqueio de CORS do navegador.
+  const { data, error } = await supabase.functions.invoke("enviar-solicitacao", {
     body: formData,
   });
 
-  if (response.status !== 200) {
-    throw new Error(`Falha ao enviar solicitação (HTTP ${response.status}).`);
+  if (error) {
+    const detalhe = (data as { error?: string } | null)?.error;
+    throw new Error(
+      detalhe ?? "Não foi possível enviar sua solicitação. Tente novamente."
+    );
   }
 }
