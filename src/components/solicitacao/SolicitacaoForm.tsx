@@ -104,33 +104,22 @@ export function SolicitacaoForm() {
         )}
       </div>
 
-      {/* Área */}
+      {/* E-mail */}
       <div className="space-y-2">
-        <Label htmlFor="area">Área</Label>
-        <Select
-          value={area ?? ""}
+        <Label htmlFor="email">E-mail</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="seu.email@empresa.com"
           disabled={isSubmitting}
-          onValueChange={(value) =>
-            setValue("area", value as SolicitacaoFormValues["area"], {
-              shouldValidate: true,
-            })
-          }
-        >
-          <SelectTrigger id="area" aria-invalid={!!errors.area}>
-            <SelectValue placeholder="Selecione a área" />
-          </SelectTrigger>
-          <SelectContent>
-            {AREAS.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.area && (
-          <p className="text-sm font-medium text-destructive">{errors.area.message}</p>
+          aria-invalid={!!errors.email}
+          {...register("email")}
+        />
+        {errors.email && (
+          <p className="text-sm font-medium text-destructive">{errors.email.message}</p>
         )}
       </div>
+
 
       {/* Título */}
       <div className="space-y-2">
