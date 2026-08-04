@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface SolicitacaoPayload {
   nome: string;
-  area: string;
+  email: string;
   titulo: string;
   texto: string;
   imagem?: File | null;
@@ -11,7 +11,7 @@ export interface SolicitacaoPayload {
 export async function enviarSolicitacao(payload: SolicitacaoPayload): Promise<void> {
   const formData = new FormData();
   formData.append("nome", payload.nome);
-  formData.append("area", payload.area);
+  formData.append("email", payload.email);
   formData.append("titulo", payload.titulo);
   formData.append("texto", payload.texto);
   if (payload.imagem) {

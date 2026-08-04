@@ -9,16 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { ImageDropzone } from "./ImageDropzone";
-import { AREAS, solicitacaoSchema, type SolicitacaoFormValues } from "./schema";
+import { solicitacaoSchema, type SolicitacaoFormValues } from "./schema";
 import { enviarSolicitacao } from "@/services/solicitacao";
 import {
   SolicitacaoConfirmacao,
@@ -28,6 +21,7 @@ import {
 
 const defaultValues: Partial<SolicitacaoFormValues> = {
   nome: "",
+  email: "",
   titulo: "",
   texto: "",
   imagem: null,
@@ -50,13 +44,12 @@ export function SolicitacaoForm() {
   const [resumo, setResumo] = useState<SolicitacaoResumo | null>(null);
 
   const imagem = watch("imagem") ?? null;
-  const area = watch("area");
 
   const onSubmit = async (values: SolicitacaoFormValues) => {
     try {
       await enviarSolicitacao({
         nome: values.nome,
-        area: values.area,
+        email: values.email,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem ?? null,
@@ -64,7 +57,7 @@ export function SolicitacaoForm() {
       toast.success("Solicitação enviada com sucesso.");
       setResumo({
         nome: values.nome,
-        area: values.area,
+        email: values.email,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem
@@ -110,33 +103,22 @@ export function SolicitacaoForm() {
         )}
       </div>
 
-      {/* Área */}
+      {/* E-mail */}
       <div className="space-y-2">
-        <Label htmlFor="area">Área</Label>
-        <Select
-          value={area ?? ""}
+        <Label htmlFor="email">E-mail</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="seu.email@empresa.com"
           disabled={isSubmitting}
-          onValueChange={(value) =>
-            setValue("area", value as SolicitacaoFormValues["area"], {
-              shouldValidate: true,
-            })
-          }
-        >
-          <SelectTrigger id="area" aria-invalid={!!errors.area}>
-            <SelectValue placeholder="Selecione a área" />
-          </SelectTrigger>
-          <SelectContent>
-            {AREAS.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.area && (
-          <p className="text-sm font-medium text-destructive">{errors.area.message}</p>
+          aria-invalid={!!errors.email}
+          {...register("email")}
+        />
+        {errors.email && (
+          <p className="text-sm font-medium text-destructive">{errors.email.message}</p>
         )}
       </div>
+
 
       {/* Título */}
       <div className="space-y-2">
