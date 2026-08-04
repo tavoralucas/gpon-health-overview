@@ -141,7 +141,7 @@ export function SolicitacaoForm() {
         <Textarea
           id="texto"
           rows={6}
-          placeholder="Descreva sua solicitação com pelo menos 20 caracteres"
+          placeholder="Descreva sua solicitacao, pedido ou falha contendo a maior quantidade de informações possíveis"
           disabled={isSubmitting}
           aria-invalid={!!errors.texto}
           {...register("texto")}
