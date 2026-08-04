@@ -1,1 +1,4 @@
 project_id = "anzxlimjfuosygtuhaob"
+
+[functions.enviar-solicitacao]
+verify_jwt = false
