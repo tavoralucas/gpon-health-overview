@@ -44,13 +44,12 @@ export function SolicitacaoForm() {
   const [resumo, setResumo] = useState<SolicitacaoResumo | null>(null);
 
   const imagem = watch("imagem") ?? null;
-  const area = watch("area");
 
   const onSubmit = async (values: SolicitacaoFormValues) => {
     try {
       await enviarSolicitacao({
         nome: values.nome,
-        area: values.area,
+        email: values.email,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem ?? null,
@@ -58,7 +57,7 @@ export function SolicitacaoForm() {
       toast.success("Solicitação enviada com sucesso.");
       setResumo({
         nome: values.nome,
-        area: values.area,
+        email: values.email,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem
