@@ -93,7 +93,7 @@ export function SolicitacaoForm() {
         <Label htmlFor="nome">Nome ou Login</Label>
         <Input
           id="nome"
-          placeholder="Seu nome completo"
+          placeholder="Preencha aqui seu nome ou login"
           disabled={isSubmitting}
           aria-invalid={!!errors.nome}
           {...register("nome")}
