@@ -90,7 +90,7 @@ export function SolicitacaoForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
       {/* Nome */}
       <div className="space-y-2">
-        <Label htmlFor="nome">Nome</Label>
+        <Label htmlFor="nome">Nome ou Login</Label>
         <Input
           id="nome"
           placeholder="Seu nome completo"
