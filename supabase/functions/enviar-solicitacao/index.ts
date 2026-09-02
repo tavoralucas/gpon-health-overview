@@ -6,7 +6,7 @@ const corsHeaders = {
 
 const WEBHOOK_URL =
   Deno.env.get("N8N_WEBHOOK_URL") ??
-  "https://n8n.beon.digital:5678/webhook/nova-solicitacao";
+  "https://n8n.beon.digital/webhook/nova-solicitacao";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
