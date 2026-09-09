@@ -39,7 +39,7 @@ export function SolicitacaoForm() {
     formState: { errors, isSubmitting },
   } = useForm<SolicitacaoFormValues>({
     resolver: zodResolver(solicitacaoSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: defaultValues as SolicitacaoFormValues,
   });
 
