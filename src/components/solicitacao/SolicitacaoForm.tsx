@@ -22,6 +22,8 @@ import {
 const defaultValues: Partial<SolicitacaoFormValues> = {
   nome: "",
   email: "",
+  codigoCidade: "",
+  enderecoMac: "",
   titulo: "",
   texto: "",
   imagem: null,

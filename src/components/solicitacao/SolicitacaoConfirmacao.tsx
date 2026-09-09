@@ -5,6 +5,8 @@ import { formatFileSize } from "./ImageDropzone";
 export interface SolicitacaoResumo {
   nome: string;
   email: string;
+  codigoCidade: string;
+  enderecoMac: string;
   titulo: string;
   texto: string;
   imagem?: { name: string; size: number } | null;
