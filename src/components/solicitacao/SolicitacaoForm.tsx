@@ -52,6 +52,8 @@ export function SolicitacaoForm() {
       await enviarSolicitacao({
         nome: values.nome,
         email: values.email,
+        codigoCidade: values.codigoCidade,
+        enderecoMac: values.enderecoMac,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem ?? null,
@@ -60,6 +62,8 @@ export function SolicitacaoForm() {
       setResumo({
         nome: values.nome,
         email: values.email,
+        codigoCidade: values.codigoCidade,
+        enderecoMac: values.enderecoMac,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem

@@ -51,6 +51,8 @@ export function SolicitacaoConfirmacao({ resumo, onNovaSolicitacao }: Props) {
       <dl className="space-y-4 rounded-xl border border-border bg-background p-5">
         <Campo label="Nome">{resumo.nome}</Campo>
         <Campo label="E-mail">{resumo.email}</Campo>
+        <Campo label="Código da Cidade">{resumo.codigoCidade}</Campo>
+        <Campo label="Endereço MAC">{resumo.enderecoMac}</Campo>
         <Campo label="Título">{resumo.titulo}</Campo>
         <Campo label="Descrição">
           <span className="whitespace-pre-wrap">{resumo.texto}</span>
