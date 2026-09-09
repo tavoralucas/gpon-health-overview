@@ -93,103 +93,109 @@ export function SolicitacaoForm() {
 
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
       {/* Nome */}
-      <div className="space-y-2">
-        <Label htmlFor="nome">Nome ou Login</Label>
+      <div className="space-y-1">
+        <Label htmlFor="nome" className="text-sm">Nome ou Login</Label>
         <Input
           id="nome"
           placeholder="Preencha aqui seu nome ou login"
           disabled={isSubmitting}
           aria-invalid={!!errors.nome}
+          className="h-10"
           {...register("nome")}
         />
         {errors.nome && (
-          <p className="text-sm font-medium text-destructive">{errors.nome.message}</p>
+          <p className="text-xs font-medium text-destructive">{errors.nome.message}</p>
         )}
       </div>
 
       {/* E-mail */}
-      <div className="space-y-2">
-        <Label htmlFor="email">E-mail</Label>
+      <div className="space-y-1">
+        <Label htmlFor="email" className="text-sm">E-mail</Label>
         <Input
           id="email"
           type="email"
           placeholder="seu.email@empresa.com"
           disabled={isSubmitting}
           aria-invalid={!!errors.email}
+          className="h-10"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-sm font-medium text-destructive">{errors.email.message}</p>
+          <p className="text-xs font-medium text-destructive">{errors.email.message}</p>
         )}
       </div>
 
       {/* Código da Cidade + Endereço MAC (lado a lado) */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="codigoCidade">Código da Cidade</Label>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="codigoCidade" className="text-sm">Código da Cidade</Label>
           <Input
             id="codigoCidade"
             placeholder="Ex.: 5100"
             disabled={isSubmitting}
             aria-invalid={!!errors.codigoCidade}
+            className="h-10"
             {...register("codigoCidade")}
           />
           {errors.codigoCidade && (
-            <p className="text-sm font-medium text-destructive">{errors.codigoCidade.message}</p>
+            <p className="text-xs font-medium text-destructive">{errors.codigoCidade.message}</p>
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="enderecoMac">Endereço MAC</Label>
+        <div className="space-y-1">
+          <Label htmlFor="enderecoMac" className="text-sm">Endereço MAC</Label>
           <Input
             id="enderecoMac"
             placeholder="AA:BB:CC:DD:EE:FF"
             disabled={isSubmitting}
             aria-invalid={!!errors.enderecoMac}
+            className="h-10"
             {...register("enderecoMac")}
           />
           {errors.enderecoMac && (
-            <p className="text-sm font-medium text-destructive">{errors.enderecoMac.message}</p>
+            <p className="text-xs font-medium text-destructive">{errors.enderecoMac.message}</p>
           )}
         </div>
       </div>
 
       {/* Título */}
-      <div className="space-y-2">
-        <Label htmlFor="titulo">Título</Label>
+      <div className="space-y-1">
+        <Label htmlFor="titulo" className="text-sm">Título</Label>
         <Input
           id="titulo"
           placeholder="Resumo da sua solicitação"
           disabled={isSubmitting}
           aria-invalid={!!errors.titulo}
+          className="h-10"
           {...register("titulo")}
         />
         {errors.titulo && (
-          <p className="text-sm font-medium text-destructive">{errors.titulo.message}</p>
+          <p className="text-xs font-medium text-destructive">{errors.titulo.message}</p>
         )}
       </div>
 
       {/* Descrição */}
-      <div className="space-y-2">
-        <Label htmlFor="texto">Descrição</Label>
+      <div className="space-y-1">
+        <Label htmlFor="texto" className="text-sm">Descrição</Label>
         <Textarea
           id="texto"
-          rows={6}
+          rows={3}
           placeholder="Descreva sua solicitacao, pedido ou falha contendo a maior quantidade de informações possíveis"
           disabled={isSubmitting}
           aria-invalid={!!errors.texto}
+          className="min-h-[72px] resize-none"
           {...register("texto")}
         />
         {errors.texto && (
-          <p className="text-sm font-medium text-destructive">{errors.texto.message}</p>
+          <p className="text-xs font-medium text-destructive">{errors.texto.message}</p>
         )}
       </div>
 
       {/* Imagem */}
-      <div className="space-y-2">
-        <Label>Imagem (opcional)</Label>
+      <div className="space-y-1">
+        <Label className="text-sm">Imagem (opcional)</Label>
         <ImageDropzone
           file={imagem}
           disabled={isSubmitting}
@@ -198,15 +204,15 @@ export function SolicitacaoForm() {
         />
       </div>
 
-      <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={isSubmitting}>
+      <Button type="submit" size="default" className="h-10 w-full text-sm" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Enviando...
           </>
         ) : (
           <>
-            <Send className="mr-2 h-5 w-5" />
+            <Send className="mr-2 h-4 w-4" />
             Enviar Solicitação
           </>
         )}
