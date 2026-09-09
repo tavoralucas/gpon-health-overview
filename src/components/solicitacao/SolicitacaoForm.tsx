@@ -22,6 +22,8 @@ import {
 const defaultValues: Partial<SolicitacaoFormValues> = {
   nome: "",
   email: "",
+  codigoCidade: "",
+  enderecoMac: "",
   titulo: "",
   texto: "",
   imagem: null,
@@ -50,6 +52,8 @@ export function SolicitacaoForm() {
       await enviarSolicitacao({
         nome: values.nome,
         email: values.email,
+        codigoCidade: values.codigoCidade,
+        enderecoMac: values.enderecoMac,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem ?? null,
@@ -58,6 +62,8 @@ export function SolicitacaoForm() {
       setResumo({
         nome: values.nome,
         email: values.email,
+        codigoCidade: values.codigoCidade,
+        enderecoMac: values.enderecoMac,
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem
@@ -119,6 +125,36 @@ export function SolicitacaoForm() {
         )}
       </div>
 
+      {/* Código da Cidade + Endereço MAC (lado a lado) */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="codigoCidade">Código da Cidade</Label>
+          <Input
+            id="codigoCidade"
+            placeholder="Ex.: 5100"
+            disabled={isSubmitting}
+            aria-invalid={!!errors.codigoCidade}
+            {...register("codigoCidade")}
+          />
+          {errors.codigoCidade && (
+            <p className="text-sm font-medium text-destructive">{errors.codigoCidade.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="enderecoMac">Endereço MAC</Label>
+          <Input
+            id="enderecoMac"
+            placeholder="AA:BB:CC:DD:EE:FF"
+            disabled={isSubmitting}
+            aria-invalid={!!errors.enderecoMac}
+            {...register("enderecoMac")}
+          />
+          {errors.enderecoMac && (
+            <p className="text-sm font-medium text-destructive">{errors.enderecoMac.message}</p>
+          )}
+        </div>
+      </div>
 
       {/* Título */}
       <div className="space-y-2">
