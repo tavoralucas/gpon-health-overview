@@ -81,7 +81,7 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
             handleFiles(e.dataTransfer.files);
           }}
           className={cn(
-            "flex w-full flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-4 text-center transition-all duration-200",
+            "flex w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-3 text-center transition-all duration-200",
             "hover:border-primary/60 hover:bg-accent/40",
             isDragging && "border-primary bg-accent scale-[1.01]",
             disabled && "pointer-events-none opacity-60"
