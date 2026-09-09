@@ -3,8 +3,8 @@ import { SolicitacaoForm } from "@/components/solicitacao/SolicitacaoForm";
 export default function NovaSolicitacao() {
   return (
     <main className="flex h-screen w-full flex-col bg-white px-4 py-2 sm:py-3">
-      <div className="mx-auto flex h-full w-full max-w-[700px] animate-fade-in flex-col">
-        <section className="flex h-full flex-col rounded-2xl border border-border bg-muted/40 p-4 shadow-lg shadow-black/5 sm:p-5">
+      <div className="mx-auto flex h-full w-full max-w-[840px] animate-fade-in flex-col">
+        <section className="flex h-full flex-col rounded-2xl border border-border bg-muted/40 p-5 shadow-lg shadow-black/5 sm:p-6">
           <header className="mb-3 shrink-0 space-y-0.5">
             <h1 className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               Nova Solicitação
@@ -14,7 +14,7 @@ export default function NovaSolicitacao() {
             </p>
           </header>
 
-          <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+          <div className="min-h-0 flex-1 overflow-y-auto px-2">
             <SolicitacaoForm />
           </div>
         </section>
