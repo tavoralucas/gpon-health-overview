@@ -39,13 +39,16 @@ export function SolicitacaoForm() {
     formState: { errors, isSubmitting },
   } = useForm<SolicitacaoFormValues>({
     resolver: zodResolver(solicitacaoSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: defaultValues as SolicitacaoFormValues,
   });
 
   const [resumo, setResumo] = useState<SolicitacaoResumo | null>(null);
 
   const imagem = watch("imagem") ?? null;
+
+  const codigoCidadeField = register("codigoCidade");
+  const enderecoMacField = register("enderecoMac");
 
   const onSubmit = async (values: SolicitacaoFormValues) => {
     try {
@@ -134,11 +137,17 @@ export function SolicitacaoForm() {
             <Label htmlFor="codigoCidade" className="text-sm">Código da Cidade</Label>
             <Input
               id="codigoCidade"
-              placeholder="Ex.: 5100"
+              placeholder="Ex.: 038"
+              inputMode="numeric"
+              maxLength={3}
               disabled={isSubmitting}
               aria-invalid={!!errors.codigoCidade}
               className="h-10"
-              {...register("codigoCidade")}
+              {...codigoCidadeField}
+              onChange={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3);
+                codigoCidadeField.onChange(e);
+              }}
             />
             {errors.codigoCidade && (
               <p className="text-xs font-medium text-destructive">{errors.codigoCidade.message}</p>
@@ -150,10 +159,19 @@ export function SolicitacaoForm() {
             <Input
               id="enderecoMac"
               placeholder="AA:BB:CC:DD:EE:FF"
+              maxLength={17}
               disabled={isSubmitting}
               aria-invalid={!!errors.enderecoMac}
               className="h-10"
-              {...register("enderecoMac")}
+              {...enderecoMacField}
+              onChange={(e) => {
+                const hex = e.target.value
+                  .replace(/[^0-9A-Fa-f]/g, "")
+                  .slice(0, 12)
+                  .toUpperCase();
+                e.target.value = hex.replace(/(.{2})(?=.)/g, "$1:");
+                enderecoMacField.onChange(e);
+              }}
             />
             {errors.enderecoMac && (
               <p className="text-xs font-medium text-destructive">{errors.enderecoMac.message}</p>

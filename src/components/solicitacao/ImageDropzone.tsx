@@ -81,17 +81,17 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
             handleFiles(e.dataTransfer.files);
           }}
           className={cn(
-            "flex w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-3 text-center transition-all duration-200",
+            "flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-8 text-center transition-all duration-200",
             "hover:border-primary/60 hover:bg-accent/40",
             isDragging && "border-primary bg-accent scale-[1.01]",
             disabled && "pointer-events-none opacity-60"
           )}
         >
-          <ImagePlus className="h-5 w-5 text-muted-foreground" />
-          <span className="text-xs font-medium text-foreground">
+          <ImagePlus className="h-8 w-8 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">
             Arraste uma imagem aqui ou clique para selecionar
           </span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             JPG, JPEG, PNG, GIF ou WEBP — até 10 MB
           </span>
         </button>

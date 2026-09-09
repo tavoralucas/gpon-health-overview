@@ -19,7 +19,9 @@ export const solicitacaoSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "O campo Código da Cidade é obrigatório." })
-    .max(50, { message: "O código da cidade deve ter no máximo 50 caracteres." }),
+    .regex(/^\d{1,3}$/, {
+      message: "Informe apenas números (máx. 3 dígitos, ex.: 038).",
+    }),
   enderecoMac: z
     .string()
     .trim()
