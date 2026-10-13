@@ -49,11 +49,17 @@ describe("solicitacaoSchema: Código da Cidade e Endereço MAC são opcionais", 
   });
 
   it("mantém os demais campos obrigatórios", () => {
-    const result = solicitacaoSchema.safeParse({});
+    const result = solicitacaoSchema.safeParse({
+      nome: "",
+      email: "",
+      titulo: "",
+      texto: "",
+    });
     expect(result.success).toBe(false);
     const messages = result.error.issues.map((i) => i.message);
     expect(messages).toContain("O campo Nome ou Login é obrigatório.");
     expect(messages).toContain("O campo E-mail é obrigatório.");
     expect(messages).toContain("O campo Título é obrigatório.");
+    expect(messages).toContain("A descrição deve ter no mínimo 20 caracteres.");
   });
 });
