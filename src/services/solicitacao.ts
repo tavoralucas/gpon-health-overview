@@ -14,8 +14,12 @@ export async function enviarSolicitacao(payload: SolicitacaoPayload): Promise<vo
   const formData = new FormData();
   formData.append("nome", payload.nome);
   formData.append("email", payload.email);
-  formData.append("codigoCidade", payload.codigoCidade ?? "");
-  formData.append("enderecoMac", payload.enderecoMac ?? "");
+  if (payload.codigoCidade) {
+    formData.append("codigoCidade", payload.codigoCidade);
+  }
+  if (payload.enderecoMac) {
+    formData.append("enderecoMac", payload.enderecoMac);
+  }
   formData.append("titulo", payload.titulo);
   formData.append("texto", payload.texto);
   if (payload.imagem) {
