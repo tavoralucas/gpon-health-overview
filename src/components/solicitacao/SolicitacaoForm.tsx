@@ -65,8 +65,8 @@ export function SolicitacaoForm() {
       setResumo({
         nome: values.nome,
         email: values.email,
-        codigoCidade: values.codigoCidade,
-        enderecoMac: values.enderecoMac,
+        codigoCidade: values.codigoCidade ?? "",
+        enderecoMac: values.enderecoMac ?? "",
         titulo: values.titulo,
         texto: values.texto,
         imagem: values.imagem
@@ -134,7 +134,7 @@ export function SolicitacaoForm() {
         {/* Código da Cidade + Endereço MAC (lado a lado) */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <Label htmlFor="codigoCidade" className="text-sm">Código da Cidade</Label>
+            <Label htmlFor="codigoCidade" className="text-sm">Código da Cidade (opcional)</Label>
             <Input
               id="codigoCidade"
               placeholder="Ex.: 038"
@@ -155,7 +155,7 @@ export function SolicitacaoForm() {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="enderecoMac" className="text-sm">Endereço MAC</Label>
+            <Label htmlFor="enderecoMac" className="text-sm">Endereço MAC (opcional)</Label>
             <Input
               id="enderecoMac"
               placeholder="AA:BB:CC:DD:EE:FF"
