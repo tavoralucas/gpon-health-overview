@@ -18,15 +18,15 @@ export const solicitacaoSchema = z.object({
   codigoCidade: z
     .string()
     .trim()
-    .min(1, { message: "O campo Código da Cidade é obrigatório." })
-    .regex(/^\d{1,3}$/, {
+    .optional()
+    .refine((v) => !v || /^\d{1,3}$/.test(v), {
       message: "Informe apenas números (máx. 3 dígitos, ex.: 038).",
     }),
   enderecoMac: z
     .string()
     .trim()
-    .min(1, { message: "O campo Endereço MAC é obrigatório." })
-    .regex(MAC_REGEX, {
+    .optional()
+    .refine((v) => !v || MAC_REGEX.test(v), {
       message: "Informe um endereço MAC válido (ex.: AA:BB:CC:DD:EE:FF).",
     }),
   titulo: z
