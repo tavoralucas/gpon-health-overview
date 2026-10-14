@@ -7,6 +7,7 @@ import {
 
 const valido = {
   nomeSolicitante: "Maria Souza",
+  emailSolicitante: "solicitante@empresa.com",
   nomeUsuario: "João Silva",
   loginUsuario: "joao.silva",
   emailUsuario: "joao.silva@empresa.com",
@@ -36,9 +37,9 @@ describe("loteSchema", () => {
       loteSchema.safeParse({ nomeSolicitante: "Maria", emailSolicitante: "maria@empresa.com" })
         .success
     ).toBe(true);
-    expect(loteSchema.safeParse({ nomeSolicitante: "", emailSolicitante: "x@y.com" }).success).toBe(
-      false
-    );
+    expect(
+      loteSchema.safeParse({ nomeSolicitante: "", emailSolicitante: "x@y.com" }).success
+    ).toBe(false);
   });
 });
 

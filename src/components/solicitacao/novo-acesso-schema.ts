@@ -10,6 +10,12 @@ export const novoAcessoSchema = z.object({
     .trim()
     .min(1, { message: "O campo Nome do solicitante é obrigatório." })
     .max(100, { message: "O nome do solicitante deve ter no máximo 100 caracteres." }),
+  emailSolicitante: z
+    .string()
+    .trim()
+    .min(1, { message: "O campo E-mail do solicitante é obrigatório." })
+    .email({ message: "Informe um e-mail válido." })
+    .max(255, { message: "O e-mail deve ter no máximo 255 caracteres." }),
   nomeUsuario: z
     .string()
     .trim()
