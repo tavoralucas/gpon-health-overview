@@ -39,7 +39,7 @@ export function NovoAcessoForm({ modo, onExit }: { modo: "individual" | "lote"; 
     setBusy(true);
     try {
       const values = form.getValues();
-      if (modo === "individual") await enviarNovoAcesso({ modo, ...values });
+      if (modo === "individual") await enviarNovoAcesso({ modo, nomeSolicitante: values.nomeSolicitante, emailSolicitante: values.emailSolicitante, nomeUsuario: values.nomeUsuario, loginUsuario: values.loginUsuario, emailUsuario: values.emailUsuario, cargo: values.cargo, area: values.area });
       else if (arquivo) await enviarNovoAcesso({ modo, nomeSolicitante: values.nomeSolicitante, emailSolicitante: values.emailSolicitante, arquivo });
       setSuccess({ fields, date: new Date() });
       toast.success("Solicitação enviada com sucesso.");

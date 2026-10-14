@@ -25,8 +25,8 @@ export function useGuidedFlow() {
 export function FlowActions({ step, busy, onBack, onContinue }: { step: number; busy: boolean; onBack: () => void; onContinue: () => void }) {
   return <div className="flow-actions">
     <Button variant="ghost" type="button" disabled={busy} onClick={onBack}><ArrowLeft />Voltar</Button>
-    {step < 3 ? <Button type="button" size="lg" onClick={onContinue} disabled={busy}>Continuar<ArrowRight /></Button> :
-      <Button type="submit" size="lg" disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : <Send />}{busy ? "Enviando..." : "Enviar solicitação"}</Button>}
+    {step < 3 ? <Button key="continue" type="button" size="lg" onClick={onContinue} disabled={busy}>Continuar<ArrowRight /></Button> :
+      <Button key="submit" type="submit" size="lg" disabled={busy}>{busy ? <Loader2 className="animate-spin" /> : <Send />}{busy ? "Enviando..." : "Enviar solicitação"}</Button>}
   </div>;
 }
 
