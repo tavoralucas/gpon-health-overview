@@ -35,11 +35,9 @@ describe("loteSchema", () => {
   it("exige nome e e-mail do solicitante", () => {
     expect(
       loteSchema.safeParse({ nomeSolicitante: "Maria",
-  emailSolicitante: "solicitante@empresa.com", emailSolicitante: "maria@empresa.com" })
         .success
     ).toBe(true);
     expect(loteSchema.safeParse({ nomeSolicitante: "",
-  emailSolicitante: "solicitante@empresa.com", emailSolicitante: "x@y.com" }).success).toBe(
       false
     );
   });
