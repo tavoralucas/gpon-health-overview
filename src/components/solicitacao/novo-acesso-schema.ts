@@ -57,6 +57,20 @@ export const loteSchema = z.object({
 export type LoteFormValues = z.infer<typeof loteSchema>;
 
 /**
+ * Valida a lista de cabeçalhos de um arquivo de lote (CSV ou Excel).
+ * Retorna null quando válido ou a mensagem de erro.
+ */
+export function validarCabecalhos(colunas: string[]): string | null {
+  const faltando = CABECALHOS_LOTE.filter((c) => !colunas.includes(c));
+  if (faltando.length > 0) {
+    return `O arquivo não possui os cabeçalhos obrigatórios: ${faltando.join(
+      ", "
+    )}. Ajuste o arquivo para conter exatamente as colunas: ${CABECALHOS_LOTE.join(", ")}.`;
+  }
+  return null;
+}
+
+/**
  * Valida os cabeçalhos da primeira linha de um CSV de lote.
  * Aceita separador `;` ou `,`. Retorna null quando válido ou a mensagem de erro.
  */
@@ -65,12 +79,5 @@ export function validarCabecalhosCsv(primeiraLinha: string): string | null {
   const colunas = primeiraLinha
     .split(separador)
     .map((c) => c.trim().replace(/^"|"$/g, ""));
-
-  const faltando = CABECALHOS_LOTE.filter((c) => !colunas.includes(c));
-  if (faltando.length > 0) {
-    return `O arquivo não possui os cabeçalhos obrigatórios: ${faltando.join(
-      ", "
-    )}. Ajuste o arquivo para conter exatamente as colunas: ${CABECALHOS_LOTE.join(", ")}.`;
-  }
-  return null;
+  return validarCabecalhos(colunas);
 }

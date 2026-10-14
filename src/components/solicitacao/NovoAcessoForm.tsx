@@ -91,7 +91,7 @@ export function NovoAcessoForm() {
 
   const onSubmitLote = async (values: LoteFormValues) => {
     if (!arquivo) {
-      setErroArquivo("Anexe o arquivo CSV com os usuários.");
+      setErroArquivo("Anexe o arquivo CSV ou Excel com os usuários.");
       return;
     }
     setEnviandoLote(true);
@@ -360,7 +360,7 @@ export function NovoAcessoForm() {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-sm">Arquivo CSV</Label>
+              <Label className="text-sm">Arquivo CSV ou Excel</Label>
               <ArquivoLoteDropzone
                 file={arquivo}
                 disabled={isSubmitting}
