@@ -2,8 +2,31 @@ import { useCallback, useRef, useState } from "react";
 import { FileSpreadsheet, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import * as XLSX from "xlsx";
 import { formatFileSize } from "./ImageDropzone";
-import { CABECALHOS_LOTE, MAX_LOTE_SIZE, validarCabecalhosCsv } from "./novo-acesso-schema";
+import { CABECALHOS_LOTE, MAX_LOTE_SIZE, validarCabecalhos, validarCabecalhosCsv } from "./novo-acesso-schema";
+
+const EXCEL_TYPES = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+];
+
+async function lerCabecalhos(arquivo: File): Promise<string | null> {
+  const nome = arquivo.name.toLowerCase();
+  if (nome.endsWith(".csv")) {
+    const texto = await arquivo.text();
+    return validarCabecalhosCsv(texto.split(/\r?\n/)[0] ?? "");
+  }
+  if (nome.endsWith(".xlsx") || nome.endsWith(".xls") || EXCEL_TYPES.includes(arquivo.type)) {
+    const buffer = await arquivo.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: "array" });
+    const primeiraAba = workbook.Sheets[workbook.SheetNames[0]];
+    const linhas = XLSX.utils.sheet_to_json<string[]>(primeiraAba, { header: 1, range: 0, blankrows: false });
+    const primeiraLinha = (linhas[0] ?? []).map((c) => String(c).trim());
+    return validarCabecalhos(primeiraLinha);
+  }
+  return "Formato inválido. Envie um arquivo .csv ou .xlsx.";
+}
 
 interface ArquivoLoteDropzoneProps {
   file: File | null;
