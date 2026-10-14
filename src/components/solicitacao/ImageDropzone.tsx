@@ -66,7 +66,7 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
       />
 
       {!file ? (
-        <button
+        <Button variant="ghost"
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
@@ -81,7 +81,7 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
             handleFiles(e.dataTransfer.files);
           }}
           className={cn(
-            "flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-8 text-center transition-all duration-200",
+            "flex h-auto w-full whitespace-normal flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-background/60 px-4 py-8 text-center transition-all duration-200",
             "hover:border-primary/60 hover:bg-accent/40",
             isDragging && "border-primary bg-accent scale-[1.01]",
             disabled && "pointer-events-none opacity-60"
@@ -94,9 +94,9 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
           <span className="text-xs text-muted-foreground">
             JPG, JPEG, PNG, GIF ou WEBP — até 10 MB
           </span>
-        </button>
+        </Button>
       ) : (
-        <div className="animate-scale-in rounded-xl border border-border bg-background p-3">
+        <div className="animate-scale-in rounded-lg border border-border bg-background p-3">
           <div className="flex items-start gap-3">
             {preview && (
               <img
@@ -106,12 +106,12 @@ export function ImageDropzone({ file, onChange, error, disabled }: ImageDropzone
               />
             )}
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
+              <p className="break-all text-sm font-medium text-foreground">{file.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {file.type || "tipo desconhecido"} · {formatFileSize(file.size)}
               </p>
               {file.size > LARGE_FILE_WARNING && file.size <= MAX_FILE_SIZE && (
-                <p className="mt-1 flex items-center gap-1 text-xs text-[hsl(25,95%,40%)]">
+                <p className="mt-1 flex items-center gap-1 text-xs text-status-warning">
                   <AlertTriangle className="h-3.5 w-3.5" />
                   Imagem grande: o envio pode demorar mais.
                 </p>

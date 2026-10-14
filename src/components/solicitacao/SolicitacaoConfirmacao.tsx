@@ -21,10 +21,10 @@ interface Props {
 function Campo({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
-      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <dt className="text-xs font-medium uppercase text-muted-foreground">
         {label}
       </dt>
-      <dd className="text-sm text-foreground">{children}</dd>
+      <dd className="break-words text-sm text-foreground">{children}</dd>
     </div>
   );
 }
@@ -36,7 +36,7 @@ export function SolicitacaoConfirmacao({ resumo, onNovaSolicitacao }: Props) {
         <span className="animate-scale-in flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
           <CheckCircle2 className="h-8 w-8 text-primary" />
         </span>
-        <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+        <h2 className="text-xl font-bold  text-foreground sm:text-2xl">
           Solicitação enviada com sucesso
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -48,7 +48,7 @@ export function SolicitacaoConfirmacao({ resumo, onNovaSolicitacao }: Props) {
         </p>
       </div>
 
-      <dl className="space-y-4 rounded-xl border border-border bg-background p-5">
+      <dl className="review-fields gap-y-4">
         <Campo label="Nome">{resumo.nome}</Campo>
         <Campo label="E-mail">{resumo.email}</Campo>
         <Campo label="Código da Cidade">

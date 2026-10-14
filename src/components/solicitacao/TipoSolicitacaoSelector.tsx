@@ -1,50 +1,13 @@
-import { UserPlus, Wrench } from "lucide-react";
-
+import { ArrowUpRight, UserPlus, Wrench } from "lucide-react";
+import { Button } from "@/components/ui/button";
 export type TipoSolicitacao = "novo_acesso" | "problema_tecnico";
-
-interface TipoSolicitacaoSelectorProps {
-  onSelect: (tipo: TipoSolicitacao) => void;
-}
-
-const opcoes: Array<{
-  tipo: TipoSolicitacao;
-  titulo: string;
-  descricao: string;
-  Icon: typeof UserPlus;
-}> = [
-  {
-    tipo: "novo_acesso",
-    titulo: "Novo acesso",
-    descricao: "Solicite a criação de um ou mais usuários.",
-    Icon: UserPlus,
-  },
-  {
-    tipo: "problema_tecnico",
-    titulo: "Problema técnico",
-    descricao: "Relate uma falha, pedido ou problema técnico.",
-    Icon: Wrench,
-  },
-];
-
-export function TipoSolicitacaoSelector({ onSelect }: TipoSolicitacaoSelectorProps) {
-  return (
-    <div className="flex h-full flex-col justify-center">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {opcoes.map(({ tipo, titulo, descricao, Icon }) => (
-          <button
-            key={tipo}
-            type="button"
-            onClick={() => onSelect(tipo)}
-            className="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-background px-6 py-10 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <Icon className="h-7 w-7" />
-            </span>
-            <span className="text-base font-semibold text-foreground">{titulo}</span>
-            <span className="text-sm text-muted-foreground">{descricao}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+export function TipoSolicitacaoSelector({ onSelect }: { onSelect: (tipo: TipoSolicitacao) => void }) {
+  return <div className="grid gap-4 sm:grid-cols-2">
+    {[{ tipo: "novo_acesso" as const, title: "Novo acesso", detail: "Criação de usuários", Icon: UserPlus, number: "01" }, { tipo: "problema_tecnico" as const, title: "Problema técnico", detail: "Falhas, pedidos e suporte", Icon: Wrench, number: "02" }].map(({tipo, title, detail, Icon, number}) =>
+      <Button key={tipo} type="button" variant="outline" onClick={() => onSelect(tipo)} className="request-option group">
+        <span className="flex w-full items-center justify-between"><span className="option-icon"><Icon /></span><span className="font-mono text-xs text-muted-foreground">{number}</span></span>
+        <span className="mt-7 flex w-full items-center justify-between"><span className="text-xl font-semibold">{title}</span><ArrowUpRight className="text-muted-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></span>
+        <span className="w-full text-left text-sm font-normal text-muted-foreground">{detail}</span>
+      </Button>)}
+  </div>;
 }

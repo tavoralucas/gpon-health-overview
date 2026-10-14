@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Send } from "lucide-react";
+import { FlowProgress, FlowActions, FlowHeading, ReviewFields, useGuidedFlow } from "./GuidedFlow";
 import { toast } from "sonner";
 
 
@@ -29,13 +29,15 @@ const defaultValues: Partial<SolicitacaoFormValues> = {
   imagem: null,
 };
 
-export function SolicitacaoForm() {
+export function SolicitacaoForm({ onExit }: { onExit: () => void }) {
+  const { step, setStep, advance } = useGuidedFlow();
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     watch,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<SolicitacaoFormValues>({
     resolver: zodResolver(solicitacaoSchema),
@@ -88,7 +90,7 @@ export function SolicitacaoForm() {
     return (
       <SolicitacaoConfirmacao
         resumo={resumo}
-        onNovaSolicitacao={() => setResumo(null)}
+        onNovaSolicitacao={onExit}
       />
     );
   }
@@ -96,8 +98,11 @@ export function SolicitacaoForm() {
 
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex h-full flex-col justify-between gap-3" noValidate>
-      <div className="space-y-3">
+    <form onSubmit={(event) => { if (step !== 3) { event.preventDefault(); void advance(() => trigger(step === 1 ? ["nome", "email"] : ["codigoCidade", "enderecoMac", "titulo", "texto", "imagem"], { shouldFocus: true })); } else { void handleSubmit(onSubmit)(event); } }} className="guided-form" noValidate>
+      <FlowProgress step={step} />
+      <div className="step-content" key={step}>
+      <FlowHeading eyebrow="Problema técnico" title={step === 1 ? "Vamos começar por você" : step === 2 ? "O que aconteceu?" : "Confira sua solicitação"} />
+      <div hidden={step !== 1} className="space-y-5">
         {/* Nome */}
         <div className="space-y-1">
           <Label htmlFor="nome" className="text-sm">Nome ou Login</Label>
@@ -106,7 +111,7 @@ export function SolicitacaoForm() {
             placeholder="Preencha aqui seu nome ou login"
             disabled={isSubmitting}
             aria-invalid={!!errors.nome}
-            className="h-10"
+            className="h-12"
             {...register("nome")}
           />
           {errors.nome && (
@@ -123,7 +128,7 @@ export function SolicitacaoForm() {
             placeholder="seu.email@empresa.com"
             disabled={isSubmitting}
             aria-invalid={!!errors.email}
-            className="h-10"
+            className="h-12"
             {...register("email")}
           />
           {errors.email && (
@@ -131,6 +136,8 @@ export function SolicitacaoForm() {
           )}
         </div>
 
+      </div>
+      <div hidden={step !== 2} className="space-y-5">
         {/* Código da Cidade + Endereço MAC (lado a lado) */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="space-y-1">
@@ -142,7 +149,7 @@ export function SolicitacaoForm() {
               maxLength={3}
               disabled={isSubmitting}
               aria-invalid={!!errors.codigoCidade}
-              className="h-10"
+              className="h-12"
               {...codigoCidadeField}
               onChange={(e) => {
                 e.target.value = e.target.value.replace(/\D/g, "").slice(0, 3);
@@ -162,7 +169,7 @@ export function SolicitacaoForm() {
               maxLength={17}
               disabled={isSubmitting}
               aria-invalid={!!errors.enderecoMac}
-              className="h-10"
+              className="h-12"
               {...enderecoMacField}
               onChange={(e) => {
                 const hex = e.target.value
@@ -187,7 +194,7 @@ export function SolicitacaoForm() {
             placeholder="Resumo da sua solicitação"
             disabled={isSubmitting}
             aria-invalid={!!errors.titulo}
-            className="h-10"
+            className="h-12"
             {...register("titulo")}
           />
           {errors.titulo && (
@@ -204,7 +211,7 @@ export function SolicitacaoForm() {
             placeholder="Descreva sua solicitacao, pedido ou falha contendo a maior quantidade de informações possíveis"
             disabled={isSubmitting}
             aria-invalid={!!errors.texto}
-            className="min-h-[72px] resize-none"
+            className="min-h-[112px] resize-y"
             {...register("texto")}
           />
           {errors.texto && (
@@ -224,19 +231,9 @@ export function SolicitacaoForm() {
         </div>
       </div>
 
-      <Button type="submit" size="default" className="h-10 w-full text-sm" disabled={isSubmitting}>
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Enviando...
-          </>
-        ) : (
-          <>
-            <Send className="mr-2 h-4 w-4" />
-            Enviar Solicitação
-          </>
-        )}
-      </Button>
+      {step === 3 && <ReviewFields fields={[["Nome ou Login", watch("nome")], ["E-mail", watch("email")], ["Código da Cidade", watch("codigoCidade")], ["Endereço MAC", watch("enderecoMac")], ["Título", watch("titulo")], ["Descrição", watch("texto")], ["Imagem", imagem?.name]]} />}
+      </div>
+      <FlowActions step={step} busy={isSubmitting} onBack={() => step === 1 ? onExit() : setStep(step - 1)} onContinue={() => void advance(() => trigger(step === 1 ? ["nome", "email"] : ["codigoCidade", "enderecoMac", "titulo", "texto", "imagem"], { shouldFocus: true }))} />
     </form>
   );
 }
