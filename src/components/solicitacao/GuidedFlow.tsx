@@ -39,7 +39,7 @@ export function FlowHeading({ eyebrow, title }: { eyebrow: string; title: string
 }
 
 export function FlowFooter() {
-  return <div className="flow-footer"><ShieldCheck className="h-4 w-4" /><span>Central de solicitações</span><span className="ml-auto font-mono">BEON / OPERAÇÕES</span></div>;
+  return <div className="flow-footer"><ShieldCheck className="h-4 w-4" /><span>Central de solicitações</span><span className="ml-auto font-mono">BEON - GPON / OPERAÇÕES</span></div>;
 }
 
 export function ConnectivityArt() {
