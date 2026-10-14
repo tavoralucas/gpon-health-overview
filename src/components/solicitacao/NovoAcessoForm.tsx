@@ -29,6 +29,7 @@ interface ResumoNovoAcesso {
 
 const defaultIndividual: NovoAcessoFormValues = {
   nomeSolicitante: "",
+  emailSolicitante: "",
   nomeUsuario: "",
   loginUsuario: "",
   emailUsuario: "",
@@ -66,6 +67,7 @@ export function NovoAcessoForm() {
       await enviarNovoAcesso({
         modo: "individual",
         nomeSolicitante: values.nomeSolicitante,
+        emailSolicitante: values.emailSolicitante,
         nomeUsuario: values.nomeUsuario,
         loginUsuario: values.loginUsuario,
         emailUsuario: values.emailUsuario,
@@ -189,6 +191,7 @@ export function NovoAcessoForm() {
               Use este formulário para solicitar a criação de um único usuário.
             </p>
 
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="nomeSolicitante" className="text-sm">Nome do solicitante</Label>
               <Input
@@ -204,6 +207,24 @@ export function NovoAcessoForm() {
                   {individual.formState.errors.nomeSolicitante.message}
                 </p>
               )}
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="emailSolicitante" className="text-sm">E-mail do solicitante</Label>
+              <Input
+                id="emailSolicitante"
+                type="email"
+                placeholder="seu.email@empresa.com"
+                disabled={isSubmitting}
+                aria-invalid={!!individual.formState.errors.emailSolicitante}
+                className="h-10"
+                {...individual.register("emailSolicitante")}
+              />
+              {individual.formState.errors.emailSolicitante && (
+                <p className="text-xs font-medium text-destructive">
+                  {individual.formState.errors.emailSolicitante.message}
+                </p>
+              )}
+            </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
