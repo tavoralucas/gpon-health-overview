@@ -87,7 +87,7 @@ export function ArquivoLoteDropzone({ file, onChange, error, disabled }: Arquivo
       />
 
       {!file ? (
-        <button
+        <Button variant="ghost"
           type="button"
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
@@ -102,7 +102,7 @@ export function ArquivoLoteDropzone({ file, onChange, error, disabled }: Arquivo
             void handleFiles(e.dataTransfer.files);
           }}
           className={cn(
-            "flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background/60 px-4 py-8 text-center transition-all duration-200",
+            "flex h-auto w-full whitespace-normal flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-background/60 px-4 py-8 text-center transition-all duration-200",
             "hover:border-primary/60 hover:bg-accent/40",
             isDragging && "border-primary bg-accent scale-[1.01]",
             disabled && "pointer-events-none opacity-60"
@@ -115,15 +115,15 @@ export function ArquivoLoteDropzone({ file, onChange, error, disabled }: Arquivo
           <span className="text-xs text-muted-foreground">
             Colunas obrigatórias: {CABECALHOS_LOTE.join(", ")} — até 5 MB
           </span>
-        </button>
+        </Button>
       ) : (
-        <div className="animate-scale-in rounded-xl border border-border bg-background p-3">
+        <div className="animate-scale-in rounded-lg border border-border bg-background p-3">
           <div className="flex items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-accent">
               <FileSpreadsheet className="h-5 w-5 text-primary" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-foreground">{file.name}</p>
+              <p className="break-all text-sm font-medium text-foreground">{file.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Arquivo válido · {formatFileSize(file.size)}
               </p>
