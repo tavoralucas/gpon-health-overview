@@ -34,12 +34,12 @@ describe("novoAcessoSchema", () => {
 describe("loteSchema", () => {
   it("exige nome e e-mail do solicitante", () => {
     expect(
-      loteSchema.safeParse({ nomeSolicitante: "Maria",
+      loteSchema.safeParse({ nomeSolicitante: "Maria", emailSolicitante: "maria@empresa.com" })
         .success
     ).toBe(true);
-    expect(loteSchema.safeParse({ nomeSolicitante: "",
-      false
-    );
+    expect(
+      loteSchema.safeParse({ nomeSolicitante: "", emailSolicitante: "x@y.com" }).success
+    ).toBe(false);
   });
 });
 
