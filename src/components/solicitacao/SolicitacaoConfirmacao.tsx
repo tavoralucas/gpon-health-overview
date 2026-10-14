@@ -21,7 +21,7 @@ interface Props {
 function Campo({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
-      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <dt className="text-xs font-medium uppercase text-muted-foreground">
         {label}
       </dt>
       <dd className="break-words text-sm text-foreground">{children}</dd>
@@ -48,7 +48,7 @@ export function SolicitacaoConfirmacao({ resumo, onNovaSolicitacao }: Props) {
         </p>
       </div>
 
-      <dl className="space-y-4 review-fields">
+      <dl className="review-fields gap-y-4">
         <Campo label="Nome">{resumo.nome}</Campo>
         <Campo label="E-mail">{resumo.email}</Campo>
         <Campo label="Código da Cidade">
