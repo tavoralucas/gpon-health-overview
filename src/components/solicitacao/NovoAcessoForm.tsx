@@ -63,7 +63,15 @@ export function NovoAcessoForm() {
 
   const onSubmitIndividual = async (values: NovoAcessoFormValues) => {
     try {
-      await enviarNovoAcesso({ modo: "individual", ...values });
+      await enviarNovoAcesso({
+        modo: "individual",
+        nomeSolicitante: values.nomeSolicitante,
+        nomeUsuario: values.nomeUsuario,
+        loginUsuario: values.loginUsuario,
+        emailUsuario: values.emailUsuario,
+        cargo: values.cargo,
+        area: values.area,
+      });
       toast.success("Solicitação enviada com sucesso.");
       setResumo({
         modo: "individual",
@@ -88,7 +96,12 @@ export function NovoAcessoForm() {
     }
     setEnviandoLote(true);
     try {
-      await enviarNovoAcesso({ modo: "lote", ...values, arquivo });
+      await enviarNovoAcesso({
+        modo: "lote",
+        nomeSolicitante: values.nomeSolicitante,
+        emailSolicitante: values.emailSolicitante,
+        arquivo,
+      });
       toast.success("Solicitação enviada com sucesso.");
       setResumo({
         modo: "lote",
