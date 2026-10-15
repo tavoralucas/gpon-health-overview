@@ -49,7 +49,7 @@ describe("chamadoSchema — campos comuns obrigatórios (R3)", () => {
   it("rejeita tipo inválido", () => {
     const result = chamadoSchema.safeParse({
       ...BASE_VALIDO,
-      // @ts-expect-error — tipo inválido intencional
+      // @ts-ignore — tipo inválido intencional
       tipo: "tipo_invalido",
     });
     expect(result.success).toBe(false);
@@ -100,7 +100,7 @@ describe("chamadoSchema — campos comuns obrigatórios (R3)", () => {
   it("rejeita urgência inválida", () => {
     const result = chamadoSchema.safeParse({
       ...BASE_VALIDO,
-      // @ts-expect-error — urgência inválida intencional
+      // @ts-ignore — urgência inválida intencional
       urgencia: "urgentissima",
     });
     expect(result.success).toBe(false);
@@ -109,7 +109,7 @@ describe("chamadoSchema — campos comuns obrigatórios (R3)", () => {
   it("rejeita impacto inválido", () => {
     const result = chamadoSchema.safeParse({
       ...BASE_VALIDO,
-      // @ts-expect-error — impacto inválido intencional
+      // @ts-ignore — impacto inválido intencional
       impacto: "global",
     });
     expect(result.success).toBe(false);
@@ -230,7 +230,7 @@ describe("chamadoSchema — campos calculados não devem ser enviados", () => {
   it("rejeita prioridade explícita (deve ser calculada pelo sistema)", () => {
     const result = chamadoSchema.safeParse({
       ...BASE_VALIDO,
-      // @ts-expect-error — prioridade não deve estar no schema de input
+      // @ts-ignore — prioridade não deve estar no schema de input
       prioridade: "alta",
     });
     expect(result.success).toBe(false);
