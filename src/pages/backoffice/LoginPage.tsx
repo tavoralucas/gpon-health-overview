@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
+import { Waypoints } from 'lucide-react';
+import { ConnectivityArt, FlowFooter, useBrandFonts } from '@/components/effects/Connectivity';
 
 export function LoginPage() {
   const { t } = useTranslation();
+  useBrandFonts();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
@@ -40,10 +43,13 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="solicitation-page flex min-h-screen items-center justify-center px-5">
+      <div className="connection-banner"><ConnectivityArt /></div>
+      <div className="bo-page-enter relative w-full max-w-md">
+      <Card className="w-full">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Backoffice de Chamados</CardTitle>
+          <div className="mx-auto mb-3 bo-brand-mark is-lg"><Waypoints className="h-6 w-6" /></div>
+          <CardTitle className="text-2xl">Backoffice <span className="text-primary">GPON.</span></CardTitle>
           <CardDescription>Faça login para acessar o painel</CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,16 +77,18 @@ export function LoginPage() {
               />
             </div>
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
                 {error}
               </div>
             )}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full min-h-11" disabled={loading}>
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
         </CardContent>
       </Card>
+      <FlowFooter />
+      </div>
     </div>
   );
 }

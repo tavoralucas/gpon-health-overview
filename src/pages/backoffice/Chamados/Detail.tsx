@@ -1,3 +1,4 @@
+import { LoadingRows } from '@/components/effects/Connectivity';
 // T-012: Chamado detail page
 
 import { useState } from 'react';
@@ -66,7 +67,7 @@ export function ChamadoDetailPage() {
   const [prioritySaving, setPrioritySaving] = useState(false);
 
   if (isLoading) {
-    return <div className="text-center py-8">Carregando...</div>;
+    return <LoadingRows rows={5} />;
   }
 
   if (error || !ticket) {

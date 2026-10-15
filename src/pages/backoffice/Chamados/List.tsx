@@ -1,3 +1,4 @@
+import { CircuitState, LoadingRows } from '@/components/effects/Connectivity';
 // T-010: Chamados list page with filters and pagination
 
 import { useState } from 'react';
@@ -286,12 +287,12 @@ export function ChamadosListPage() {
       <Card>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-center text-muted-foreground">Carregando...</div>
+            <LoadingRows />
           ) : error ? (
-            <div className="p-6 text-center text-red-500">Erro ao carregar chamados</div>
+            <CircuitState tone="error" title="Erro ao carregar chamados" message="Tente novamente em instantes." />
           ) : data?.data && data.data.length > 0 ? (
             <>
-              <Table>
+              <Table className="bo-table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Código</TableHead>
@@ -367,9 +368,7 @@ export function ChamadosListPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 text-center text-muted-foreground">
-              Nenhum chamado encontrado.
-            </div>
+            <CircuitState title="Nenhum chamado encontrado" message="Ajuste os filtros ou crie um novo chamado." />
           )}
         </CardContent>
       </Card>

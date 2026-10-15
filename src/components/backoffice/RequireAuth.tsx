@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { CircuitState, LoadingRows } from '@/components/effects/Connectivity';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Profile {
@@ -61,7 +62,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">Carregando...</div>;
+    return <div className="mx-auto max-w-3xl pt-24"><LoadingRows rows={4} /></div>;
   }
 
   if (!session) {
@@ -72,12 +73,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   if (!profile || profile.status !== 'active') {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">Acesso não autorizado</h1>
-          <p className="mt-2 text-muted-foreground">
-            Você não tem permissão para acessar o backoffice.
-          </p>
-        </div>
+        <CircuitState tone="error" title="Acesso não autorizado" message="Você não tem permissão para acessar o backoffice." />
       </div>
     );
   }
