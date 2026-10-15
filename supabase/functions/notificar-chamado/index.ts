@@ -69,10 +69,24 @@ serve(async (req) => {
         );
     }
 
+    // Determine recipient: for 'atribuido', send to assigned agent; otherwise to requester
+    let recipientEmail = ticket.solicitante_email;
+
+    if (evento === 'atribuido' && ticket.atribuido_a) {
+      const { data: agentProfile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', ticket.atribuido_a)
+        .single();
+      if (agentProfile?.email) {
+        recipientEmail = agentProfile.email;
+      }
+    }
+
     try {
       await resend.emails.send({
         from: `${RESEND_FROM_NAME} <${RESEND_FROM_EMAIL}>`,
-        to: ticket.solicitante_email,
+        to: recipientEmail,
         subject,
         text: content,
       });

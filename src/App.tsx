@@ -9,6 +9,7 @@ import AppLayout from "./components/AppLayout";
 import NovaSolicitacao from "./pages/NovaSolicitacao";
 import { LoginPage } from "./pages/backoffice/LoginPage";
 import { RequireAuth } from "./components/backoffice/RequireAuth";
+import { RequireAdmin } from "./components/backoffice/RequireAdmin";
 import { BackofficeLayout } from "./components/backoffice/BackofficeLayout";
 import { DashboardPage } from "./pages/backoffice/DashboardPage";
 import { ChamadosListPage } from "./pages/backoffice/Chamados/List";
@@ -47,7 +48,7 @@ const App = () => (
             <Route path="chamados" element={<ChamadosListPage />} />
             <Route path="chamados/novo" element={<ChamadoFormPage />} />
             <Route path="chamados/:id" element={<ChamadoDetailPage />} />
-            <Route path="agentes" element={<AgentesPage />} />
+            <Route path="agentes" element={<RequireAdmin><AgentesPage /></RequireAdmin>} />
           </Route>
 
           <Route path="*" element={<Navigate to="/nova-solicitacao" replace />} />

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useUpdateTicket } from '@/services/tickets';
+import { useNotificarChamado } from '@/services/notificacao';
 import { transicoesPermitidas, STATUS_LABELS, type StatusTicket } from '@/lib/transitions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +15,7 @@ interface StatusTransitionProps {
 export function StatusTransition({ ticketId, currentStatus }: StatusTransitionProps) {
   const [loading, setLoading] = useState(false);
   const updateTicket = useUpdateTicket();
+  const notificar = useNotificarChamado();
 
   const allowedTransitions = transicoesPermitidas(currentStatus);
 
@@ -24,6 +26,10 @@ export function StatusTransition({ ticketId, currentStatus }: StatusTransitionPr
         id: ticketId,
         status: newStatus,
       });
+      // Fire-and-forget notification after successful status transition (AC-32/33/34/35)
+      if (newStatus === 'resolvido' || newStatus === 'fechado' || newStatus === 'reaberto') {
+        notificar.mutate({ ticket_id: ticketId, evento: newStatus });
+      }
     } catch (err) {
       console.error('Erro ao alterar status:', err);
     } finally {

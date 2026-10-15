@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAgentesAtivos } from '@/services/agentes';
 import { useUpdateTicket } from '@/services/tickets';
+import { useNotificarChamado } from '@/services/notificacao';
 import { STATUS_LABELS, type StatusTicket } from '@/lib/transitions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +26,7 @@ export function AgentAssignment({ ticketId, currentAgentId, currentStatus }: Age
   const [loading, setLoading] = useState(false);
   const { data: agents } = useAgentesAtivos();
   const updateTicket = useUpdateTicket();
+  const notificar = useNotificarChamado();
 
   const handleAssign = async () => {
     if (!selectedAgent) return;
@@ -41,6 +43,8 @@ export function AgentAssignment({ ticketId, currentAgentId, currentStatus }: Age
       }
 
       await updateTicket.mutateAsync(updateData);
+      // Fire-and-forget notification to assigned agent after assignment (AC-32)
+      notificar.mutate({ ticket_id: ticketId, evento: 'atribuido' });
     } catch (err) {
       console.error('Erro ao atribuir agente:', err);
     } finally {

@@ -33,22 +33,14 @@ export function useInviteAgente() {
 
   return useMutation({
     mutationFn: async (input: { name: string; email: string }) => {
-      // Create a profile with status 'pending'
-      // In production, this would trigger an invite email via edge function
-      const { data, error } = await supabase
-        .from('profiles')
-        .insert({
-          id: crypto.randomUUID(),
-          name: input.name,
-          email: input.email,
-          role: 'agente',
-          status: 'pending',
-        })
-        .select()
-        .single();
+      // Invite via edge function that uses Admin API to create auth user + profile
+      const { data, error } = await supabase.functions.invoke('convidar-agente', {
+        body: { name: input.name, email: input.email },
+      });
 
       if (error) throw error;
-      return data;
+      if (data?.error) throw new Error(data.error);
+      return data?.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['agentes'] });
