@@ -35,11 +35,12 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
       setSession(currentSession);
 
-      const { data: userProfile } = await supabase
+      const { data: userProfile, error: profileError } = await supabase
         .from('profiles')
         .select('id, role, status')
         .eq('id', currentSession.user.id)
-        .single();
+        .maybeSingle();
+      if (profileError) console.error('Erro ao carregar perfil:', profileError);
 
       if (!cancelled) {
         setProfile(userProfile);

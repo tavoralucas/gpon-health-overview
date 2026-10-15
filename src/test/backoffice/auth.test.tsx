@@ -18,7 +18,7 @@ const { supabaseMock } = vi.hoisted(() => ({
     from: vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(),
+          maybeSingle: vi.fn(),
         })),
       })),
     })),
@@ -59,7 +59,7 @@ function renderRequireAuth(
 
   if (profile === null) {
     const singleMock = vi.fn().mockResolvedValue({ data: null, error: null });
-    const eqMock = vi.fn(() => ({ single: singleMock }));
+    const eqMock = vi.fn(() => ({ maybeSingle: singleMock }));
     (supabaseMock.from as ReturnType<typeof vi.fn>).mockImplementation(() => ({
       select: vi.fn(() => ({ eq: eqMock })),
     }));
@@ -67,7 +67,7 @@ function renderRequireAuth(
     const singleMock = vi
       .fn()
       .mockResolvedValue({ data: profile, error: null });
-    const eqMock = vi.fn(() => ({ single: singleMock }));
+    const eqMock = vi.fn(() => ({ maybeSingle: singleMock }));
     (supabaseMock.from as ReturnType<typeof vi.fn>).mockImplementation(() => ({
       select: vi.fn(() => ({ eq: eqMock })),
     }));
