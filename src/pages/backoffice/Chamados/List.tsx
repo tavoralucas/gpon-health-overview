@@ -22,6 +22,16 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 
 const STATUS_OPTIONS = [
@@ -94,9 +104,23 @@ export function ChamadosListPage() {
     setFilters((prev) => ({ ...prev, search: searchText || undefined, page: 1 }));
   };
 
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+
   const clearFilters = () => {
     setSearchText('');
+    setStartDate(undefined);
+    setEndDate(undefined);
     setFilters({ page: 1, pageSize: 20, sortBy: 'created_at', sortOrder: 'desc' });
+  };
+
+  const applyDateFilter = () => {
+    setFilters((prev) => ({
+      ...prev,
+      startDate: startDate ? startDate.toISOString() : undefined,
+      endDate: endDate ? endDate.toISOString() : undefined,
+      page: 1,
+    }));
   };
 
   const totalPages = data ? Math.ceil(data.count / (filters.pageSize || 20)) : 1;
@@ -190,6 +214,51 @@ export function ChamadosListPage() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Período (criação)</label>
+              <div className="flex gap-2 items-center">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn("w-[140px] justify-start text-left font-normal", !startDate && "text-muted-foreground")}
+                    >
+                      <CalendarIcon className="mr-1 h-4 w-4" />
+                      {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Data inicial"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={(date) => { setStartDate(date); if (date) setTimeout(applyDateFilter, 0); }}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <span className="text-muted-foreground">até</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn("w-[140px] justify-start text-left font-normal", !endDate && "text-muted-foreground")}
+                    >
+                      <CalendarIcon className="mr-1 h-4 w-4" />
+                      {endDate ? format(endDate, "dd/MM/yyyy", { locale: ptBR }) : "Data final"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={(date) => { setEndDate(date); if (date) setTimeout(applyDateFilter, 0); }}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <div className="space-y-1 flex-1 min-w-[200px]">
