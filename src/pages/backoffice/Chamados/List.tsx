@@ -1,3 +1,4 @@
+import { CircuitState, LoadingRows } from '@/components/effects/Connectivity';
 // T-010: Chamados list page with filters and pagination
 
 import { useState } from 'react';
@@ -7,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-import { CircuitState, LoadingRows } from '@/components/effects/Connectivity';
   Select,
   SelectContent,
   SelectItem,

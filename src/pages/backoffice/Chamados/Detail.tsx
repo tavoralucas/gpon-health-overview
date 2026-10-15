@@ -1,3 +1,4 @@
+import { LoadingRows } from '@/components/effects/Connectivity';
 // T-012: Chamado detail page
 
 import { useState } from 'react';
@@ -14,7 +15,6 @@ import { Timeline } from '@/components/backoffice/Timeline';
 import { AttachmentList } from '@/components/backoffice/AttachmentList';
 import { AttachmentDropzone } from '@/components/backoffice/AttachmentDropzone';
 import {
-import { LoadingRows } from '@/components/effects/Connectivity';
   Select,
   SelectContent,
   SelectItem,
