@@ -46,7 +46,7 @@ function buildMockChain(returnValue: unknown) {
     or: vi.fn(() => chain),
     order: vi.fn(() => chain),
     range: vi.fn(() => chain),
-    single: vi.fn(() => chain),
+    maybeSingle: vi.fn(() => chain),
     insert: vi.fn(() => chain),
     update: vi.fn(() => chain),
     then: vi.fn((resolve: (v: unknown) => void) => resolve(returnValue)),
@@ -110,7 +110,7 @@ describe("useTicket — hook de detalhe (AC-17)", () => {
     vi.clearAllMocks();
   });
 
-  it("chama supabase.from('tickets').select().eq('id', ...).single()", () => {
+  it("chama supabase.from('tickets').select().eq('id', ...).maybeSingle()", () => {
     const mockChain = buildMockChain({
       data: null,
       error: null,
@@ -118,7 +118,7 @@ describe("useTicket — hook de detalhe (AC-17)", () => {
     mockFrom.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
     mockChain.eq.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     renderHook(() => useTicket("ticket-123"), { wrapper: createWrapper() });
 
@@ -130,7 +130,7 @@ describe("useTicket — hook de detalhe (AC-17)", () => {
     mockFrom.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
     mockChain.eq.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     const { result } = renderHook(() => useTicket("ticket-123"), {
       wrapper: createWrapper(),
@@ -156,7 +156,7 @@ describe("useCreateTicket — hook de criação (AC-09)", () => {
     mockFrom.mockReturnValue(mockChain);
     mockChain.insert.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     const { result } = renderHook(() => useCreateTicket(), {
       wrapper: createWrapper(),
@@ -172,7 +172,7 @@ describe("useCreateTicket — hook de criação (AC-09)", () => {
     mockFrom.mockReturnValue(mockChain);
     mockChain.insert.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     const { result } = renderHook(() => useCreateTicket(), {
       wrapper: createWrapper(),
@@ -209,7 +209,7 @@ describe("useUpdateTicket — hook de atualização (AC-19, AC-20, AC-21, AC-22)
     mockChain.update.mockReturnValue(mockChain);
     mockChain.eq.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     const { result } = renderHook(() => useUpdateTicket(), {
       wrapper: createWrapper(),
@@ -226,7 +226,7 @@ describe("useUpdateTicket — hook de atualização (AC-19, AC-20, AC-21, AC-22)
     mockChain.update.mockReturnValue(mockChain);
     mockChain.eq.mockReturnValue(mockChain);
     mockChain.select.mockReturnValue(mockChain);
-    mockChain.single.mockReturnValue(mockChain);
+    mockChain.maybeSingle.mockReturnValue(mockChain);
 
     const { result } = renderHook(() => useUpdateTicket(), {
       wrapper: createWrapper(),
