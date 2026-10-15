@@ -368,9 +368,7 @@ export function ChamadosListPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 text-center text-muted-foreground">
-              Nenhum chamado encontrado.
-            </div>
+            <CircuitState title="Nenhum chamado encontrado" message="Ajuste os filtros ou crie um novo chamado." />
           )}
         </CardContent>
       </Card>
