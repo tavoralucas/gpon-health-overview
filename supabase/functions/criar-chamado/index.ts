@@ -11,6 +11,7 @@ const CRIAR_CHAMADO_SECRET = Deno.env.get('CRIAR_CHAMADO_SECRET') || '';
 
 const TIPOS = ['problema_tecnico', 'novo_acesso_individual', 'novo_acesso_lote'] as const;
 const MAC_REGEX = /^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$/;
+const MAX_ATTACHMENTS = 5;
 
 const payloadSchema = z.object({
   tipo: z.enum(TIPOS, { required_error: 'tipo é obrigatório' }),
@@ -79,6 +80,16 @@ serve(async (req) => {
       );
     }
 
+    // Server-side enforce attachment limit
+    if (parsed.data.anexos && parsed.data.anexos.length > MAX_ATTACHMENTS) {
+      return new Response(
+        JSON.stringify({
+          error: `Máximo de ${MAX_ATTACHMENTS} anexos permitidos.`,
+        }),
+        { status: 400, headers }
+      );
+    }
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     // Idempotency check
@@ -99,32 +110,38 @@ serve(async (req) => {
 
     // Get next sequence number
     const { data: seqData } = await supabase.rpc('next_chamado_numero');
-    const seq = seqData || Math.floor(Math.random() * 999999);
-    const numero = `CHM-${String(seq).padStart(6, '0')}`;
+    const numero = seqData || `CHM-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`;
 
     // Default urgency/impact for public submissions (OPEN-5)
     const urg = 'media';
     const imp = 'local';
     const prioridade = calcularPrioridade(urg, imp);
 
+    const ticketInsert: Record<string, unknown> = {
+      numero,
+      titulo: parsed.data.titulo,
+      descricao: parsed.data.descricao,
+      tipo: parsed.data.tipo,
+      origem: 'publico',
+      solicitante_nome: parsed.data.solicitante.nome,
+      solicitante_email: parsed.data.solicitante.email,
+      codigo_cidade: parsed.data.cidade || null,
+      endereco_mac: parsed.data.mac || null,
+      urgencia: urg,
+      impacto: imp,
+      prioridade,
+      status: 'novo',
+      chave_idempotencia: parsed.data.chave_idempotencia || null,
+    };
+
+    // Persist novo_acesso data (AC-36)
+    if (parsed.data.novo_acesso) {
+      ticketInsert.novo_acesso = parsed.data.novo_acesso;
+    }
+
     const { data: ticket, error: insertError } = await supabase
       .from('tickets')
-      .insert({
-        numero,
-        titulo: parsed.data.titulo,
-        descricao: parsed.data.descricao,
-        tipo: parsed.data.tipo,
-        origem: 'publico',
-        solicitante_nome: parsed.data.solicitante.nome,
-        solicitante_email: parsed.data.solicitante.email,
-        codigo_cidade: parsed.data.cidade || null,
-        endereco_mac: parsed.data.mac || null,
-        urgencia: urg,
-        impacto: imp,
-        prioridade,
-        status: 'novo',
-        chave_idempotencia: parsed.data.chave_idempotencia || null,
-      })
+      .insert(ticketInsert)
       .select('id, numero, status, prioridade')
       .single();
 
@@ -140,6 +157,50 @@ serve(async (req) => {
         tipo: 'system',
         conteudo: `Chamado criado via formulário público com prioridade ${prioridade}`,
       });
+
+    // Attach files from provided URLs (anexos are base64/data URLs or external URLs)
+    if (parsed.data.anexos && parsed.data.anexos.length > 0) {
+      for (const anexoUrl of parsed.data.anexos) {
+        try {
+          // Download the file content
+          const fileResp = await fetch(anexoUrl);
+          if (!fileResp.ok) continue;
+          const fileBlob = await fileResp.blob();
+          const fileName = anexoUrl.split('/').pop() || 'anexo';
+          const fileExt = fileName.split('.').pop() || 'bin';
+          const storagePath = `chamados/${ticket.id}/${crypto.randomUUID()}.${fileExt}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('anexos-chamados')
+            .upload(storagePath, fileBlob);
+
+          if (uploadError) {
+            console.error('Erro ao fazer upload de anexo:', uploadError);
+            continue;
+          }
+
+          await supabase
+            .from('ticket_attachments')
+            .insert({
+              ticket_id: ticket.id,
+              storage_path: storagePath,
+              nome_arquivo: fileName,
+              tamanho_bytes: fileBlob.size,
+              content_type: fileBlob.type || 'application/octet-stream',
+            });
+
+          await supabase
+            .from('ticket_followups')
+            .insert({
+              ticket_id: ticket.id,
+              tipo: 'system',
+              conteudo: `Arquivo anexado: ${fileName}`,
+            });
+        } catch (fetchErr) {
+          console.error('Erro ao processar anexo:', fetchErr);
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({

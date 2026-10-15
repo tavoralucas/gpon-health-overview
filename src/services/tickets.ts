@@ -11,6 +11,8 @@ export interface TicketFilters {
   tipo?: string;
   origem?: string;
   search?: string;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   pageSize?: number;
   sortBy?: string;
@@ -36,6 +38,13 @@ export interface Ticket {
   criado_por: string | null;
   resolvido_em: string | null;
   fechado_em: string | null;
+  novo_acesso: {
+    nome?: string;
+    login?: string;
+    email?: string;
+    cargo?: string;
+    area?: string;
+  } | null;
   created_at: string;
   updated_at: string;
   atribuido_a_profile?: { name: string } | null;
@@ -70,6 +79,16 @@ export function useTickets(filters: TicketFilters) {
         query = query.or(
           `titulo.ilike.%${filters.search}%,numero.ilike.%${filters.search}%,descricao.ilike.%${filters.search}%,solicitante_nome.ilike.%${filters.search}%,solicitante_email.ilike.%${filters.search}%`
         );
+      }
+
+      if (filters.startDate) {
+        query = query.gte('created_at', filters.startDate);
+      }
+      if (filters.endDate) {
+        // Add one day to include the full end date
+        const endDate = new Date(filters.endDate);
+        endDate.setDate(endDate.getDate() + 1);
+        query = query.lt('created_at', endDate.toISOString());
       }
 
       const sortBy = filters.sortBy || 'created_at';
@@ -117,6 +136,14 @@ export function useCreateTicket() {
       codigo_cidade?: string;
       endereco_mac?: string;
       origem?: string;
+      novo_acesso?: {
+        nome?: string;
+        login?: string;
+        email?: string;
+        cargo?: string;
+        area?: string;
+      };
+      files?: File[];
     }) => {
       const prioridade = calcularPrioridade(input.urgencia, input.impacto);
 
@@ -125,10 +152,9 @@ export function useCreateTicket() {
 
       // Generate sequential ticket number
       const { data: seqData } = await supabase.rpc('next_chamado_numero');
-      const seq = seqData || Math.floor(Math.random() * 999999);
-      const numero = `CHM-${String(seq).padStart(6, '0')}`;
+      const numero = seqData || `CHM-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`;
 
-      const ticketInsert = {
+      const ticketInsert: Record<string, any> = {
         numero,
         titulo: input.titulo,
         descricao: input.descricao,
@@ -144,6 +170,10 @@ export function useCreateTicket() {
         status: 'novo',
         criado_por: userId,
       };
+
+      if (input.novo_acesso) {
+        ticketInsert.novo_acesso = input.novo_acesso;
+      }
 
       const { data, error } = await supabase
         .from('tickets')
@@ -162,6 +192,43 @@ export function useCreateTicket() {
           conteudo: `Chamado criado com prioridade ${prioridade}`,
           autor: userId,
         });
+
+      // Upload attachments if provided
+      if (input.files && input.files.length > 0) {
+        for (const file of input.files) {
+          const fileExt = file.name.split('.').pop();
+          const storagePath = `chamados/${data.id}/${crypto.randomUUID()}.${fileExt}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('anexos-chamados')
+            .upload(storagePath, file);
+
+          if (uploadError) {
+            console.error('Erro ao fazer upload de anexo:', uploadError);
+            continue;
+          }
+
+          await supabase
+            .from('ticket_attachments')
+            .insert({
+              ticket_id: data.id,
+              storage_path: storagePath,
+              nome_arquivo: file.name,
+              tamanho_bytes: file.size,
+              content_type: file.type,
+              uploaded_by: userId,
+            });
+
+          await supabase
+            .from('ticket_followups')
+            .insert({
+              ticket_id: data.id,
+              tipo: 'system',
+              conteudo: `Arquivo anexado: ${file.name}`,
+              autor: userId,
+            });
+        }
+      }
 
       return data;
     },
@@ -209,14 +276,21 @@ export function useUpdateTicket() {
 
       if (error) throw error;
 
-      // Create timeline event for status change
+      // Create timeline event for status change with old → new format (AC-19)
       if (input.status) {
+        // Fetch old status first
+        const { data: oldTicket } = await supabase
+          .from('tickets')
+          .select('status')
+          .eq('id', input.id)
+          .single();
+        const oldStatus = oldTicket?.status || '?';
         await supabase
           .from('ticket_followups')
           .insert({
             ticket_id: input.id,
             tipo: 'status_change',
-            conteudo: `Status alterado para ${input.status}`,
+            conteudo: `Status alterado: ${oldStatus} → ${input.status}`,
             autor: (await supabase.auth.getSession()).data?.session?.user?.id,
           });
       }
@@ -227,12 +301,27 @@ export function useUpdateTicket() {
           .select('name')
           .eq('id', input.atribuido_a)
           .single();
+        // Get old agent name if any (AC-22: "antigo → novo")
+        const { data: oldTicket } = await supabase
+          .from('tickets')
+          .select('atribuido_a')
+          .eq('id', input.id)
+          .single();
+        let oldAgentName = 'ninguém';
+        if (oldTicket?.atribuido_a) {
+          const { data: oldProfile } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', oldTicket.atribuido_a)
+            .single();
+          if (oldProfile?.name) oldAgentName = oldProfile.name;
+        }
         await supabase
           .from('ticket_followups')
           .insert({
             ticket_id: input.id,
             tipo: 'assignment',
-            conteudo: `Atribuído a ${profile?.name || 'agente'}`,
+            conteudo: `Atribuição: ${oldAgentName} → ${profile?.name || 'agente'}`,
             autor: (await supabase.auth.getSession()).data?.session?.user?.id,
           });
       }
