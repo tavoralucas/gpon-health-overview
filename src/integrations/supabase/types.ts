@@ -103,12 +103,192 @@ export type Database = {
         }
         Relationships: []
       }
+      ticket_attachments: {
+        Row: {
+          content_type: string
+          created_at: string
+          id: string
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes: number
+          ticket_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          id?: string
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes: number
+          ticket_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          id?: string
+          nome_arquivo?: string
+          storage_path?: string
+          tamanho_bytes?: number
+          ticket_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_attachments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_followups: {
+        Row: {
+          autor: string | null
+          conteudo: string
+          created_at: string
+          id: string
+          ticket_id: string
+          tipo: string
+        }
+        Insert: {
+          autor?: string | null
+          conteudo: string
+          created_at?: string
+          id?: string
+          ticket_id: string
+          tipo: string
+        }
+        Update: {
+          autor?: string | null
+          conteudo?: string
+          created_at?: string
+          id?: string
+          ticket_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_followups_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_followups_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          atribuido_a: string | null
+          chave_idempotencia: string | null
+          codigo_cidade: string | null
+          created_at: string
+          criado_por: string | null
+          descricao: string
+          endereco_mac: string | null
+          fechado_em: string | null
+          id: string
+          impacto: string
+          novo_acesso: Json | null
+          numero: string
+          origem: string
+          prioridade: string
+          resolvido_em: string | null
+          solicitante_email: string
+          solicitante_nome: string
+          status: string
+          tipo: string
+          titulo: string
+          updated_at: string
+          urgencia: string
+        }
+        Insert: {
+          atribuido_a?: string | null
+          chave_idempotencia?: string | null
+          codigo_cidade?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao: string
+          endereco_mac?: string | null
+          fechado_em?: string | null
+          id?: string
+          impacto: string
+          novo_acesso?: Json | null
+          numero: string
+          origem: string
+          prioridade: string
+          resolvido_em?: string | null
+          solicitante_email: string
+          solicitante_nome: string
+          status?: string
+          tipo: string
+          titulo: string
+          updated_at?: string
+          urgencia: string
+        }
+        Update: {
+          atribuido_a?: string | null
+          chave_idempotencia?: string | null
+          codigo_cidade?: string | null
+          created_at?: string
+          criado_por?: string | null
+          descricao?: string
+          endereco_mac?: string | null
+          fechado_em?: string | null
+          id?: string
+          impacto?: string
+          novo_acesso?: Json | null
+          numero?: string
+          origem?: string
+          prioridade?: string
+          resolvido_em?: string | null
+          solicitante_email?: string
+          solicitante_nome?: string
+          status?: string
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+          urgencia?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_atribuido_a_fkey"
+            columns: ["atribuido_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_criado_por_fkey"
+            columns: ["criado_por"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      next_chamado_numero: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
