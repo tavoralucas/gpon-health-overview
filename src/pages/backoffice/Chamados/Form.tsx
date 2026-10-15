@@ -1,6 +1,6 @@
 // T-011: Chamado form page (manual creation)
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,6 +34,20 @@ import {
 } from '@/components/ui/form';
 import { useTranslation } from 'react-i18next';
 
+const ALLOWED_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'application/pdf',
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILES = 5;
+
 const PRIORIDADE_LABELS: Record<string, string> = {
   baixa: 'Baixa',
   media: 'Média',
@@ -47,6 +61,9 @@ export function ChamadoFormPage() {
   const createTicket = useCreateTicket();
   const [selectedUrgencia, setSelectedUrgencia] = useState<string>('media');
   const [selectedImpacto, setSelectedImpacto] = useState<string>('local');
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [fileError, setFileError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ChamadoFormData>({
     resolver: zodResolver(chamadoSchema),
@@ -68,6 +85,40 @@ export function ChamadoFormPage() {
   const impacto = form.watch('impacto');
   const prioridade = calcularPrioridade(urgencia, impacto);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError('');
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Validate total count
+    const combined = [...selectedFiles, ...files];
+    if (combined.length > MAX_FILES) {
+      setFileError(`Máximo de ${MAX_FILES} arquivos permitidos.`);
+      return;
+    }
+
+    // Validate each file
+    for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      const validExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'csv', 'xls', 'xlsx'];
+      if (!validExts.includes(ext || '')) {
+        setFileError(`Formato não permitido: ${ext}. Use JPG, PNG, GIF, WEBP, PDF, CSV, XLS, XLSX.`);
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError(`Arquivo muito grande: ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB). Máximo: 10 MB.`);
+        return;
+      }
+    }
+
+    setSelectedFiles(combined);
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setFileError('');
+  };
+
   const onSubmit = async (data: ChamadoFormData) => {
     try {
       const result = await createTicket.mutateAsync({
@@ -81,6 +132,8 @@ export function ChamadoFormPage() {
         codigo_cidade: data.codigo_cidade || undefined,
         endereco_mac: data.endereco_mac || undefined,
         origem: 'manual',
+        novo_acesso: data.novo_usuario,
+        files: selectedFiles.length > 0 ? selectedFiles : undefined,
       });
 
       navigate(`/backoffice/chamados/${result.id}`);
@@ -368,6 +421,56 @@ export function ChamadoFormPage() {
                   <strong>{PRIORIDADE_LABELS[prioridade] || prioridade}</strong>
                 </span>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Attachments */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Anexos</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div
+                className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <p className="text-sm text-muted-foreground">
+                  Arraste arquivos aqui ou clique para selecionar
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  JPG, PNG, GIF, WEBP, PDF, CSV, XLS, XLSX — Máx. 10 MB por arquivo (máx. {MAX_FILES})
+                </p>
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                  accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.csv,.xls,.xlsx"
+                  multiple
+                />
+              </div>
+
+              {fileError && (
+                <p className="text-sm text-red-500">{fileError}</p>
+              )}
+
+              {selectedFiles.length > 0 && (
+                <ul className="space-y-2">
+                  {selectedFiles.map((file, index) => (
+                    <li key={index} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
+                      <span className="text-sm truncate">{file.name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFile(index)}
+                      >
+                        Remover
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </CardContent>
           </Card>
 

@@ -1,7 +1,9 @@
 // T-012: Chamado detail page
 
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useTicket, useFollowups, useAttachments } from '@/services/tickets';
+import { supabase } from '@/integrations/supabase/client';
+import { useTicket, useFollowups, useAttachments, useUpdateTicket } from '@/services/tickets';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +13,15 @@ import { FollowUpForm } from '@/components/backoffice/FollowUpForm';
 import { Timeline } from '@/components/backoffice/Timeline';
 import { AttachmentList } from '@/components/backoffice/AttachmentList';
 import { AttachmentDropzone } from '@/components/backoffice/AttachmentDropzone';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { calcularPrioridade } from '@/lib/prioridade';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 const PRIORIDADE_COLORS: Record<string, string> = {
@@ -44,9 +55,15 @@ export function ChamadoDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: ticket, isLoading, error } = useTicket(id || '');
   const { data: followups } = useFollowups(id || '');
   const { data: attachments } = useAttachments(id || '');
+  const updateTicket = useUpdateTicket();
+  const [editingPriority, setEditingPriority] = useState(false);
+  const [editUrgencia, setEditUrgencia] = useState('');
+  const [editImpacto, setEditImpacto] = useState('');
+  const [prioritySaving, setPrioritySaving] = useState(false);
 
   if (isLoading) {
     return <div className="text-center py-8">Carregando...</div>;
@@ -89,17 +106,102 @@ export function ChamadoDetailPage() {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">Prioridade</label>
-              <Badge className={PRIORIDADE_COLORS[ticket.prioridade] || ''}>
-                {ticket.prioridade}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge className={PRIORIDADE_COLORS[ticket.prioridade] || ''}>
+                  {ticket.prioridade}
+                </Badge>
+                {!editingPriority && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setEditUrgencia(ticket.urgencia);
+                      setEditImpacto(ticket.impacto);
+                      setEditingPriority(true);
+                    }}
+                  >
+                    Editar
+                  </Button>
+                )}
+                {editingPriority && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={prioritySaving}
+                    onClick={async () => {
+                      if (!editUrgencia || !editImpacto) return;
+                      setPrioritySaving(true);
+                      try {
+                        const oldUrgencia = ticket.urgencia;
+                        const oldImpacto = ticket.impacto;
+                        await updateTicket.mutateAsync({
+                          id: ticket.id,
+                          urgencia: editUrgencia as any,
+                          impacto: editImpacto as any,
+                        });
+                        await supabase
+                          .from('ticket_followups')
+                          .insert({
+                            ticket_id: ticket.id,
+                            tipo: 'system',
+                            conteudo: `Prioridade recalculada: urgência ${oldUrgencia} → ${editUrgencia}, impacto ${oldImpacto} → ${editImpacto}`,
+                          });
+                        queryClient.invalidateQueries({ queryKey: ['tickets', ticket.id] });
+                      } catch (err) {
+                        console.error('Erro ao salvar prioridade:', err);
+                      } finally {
+                        setPrioritySaving(false);
+                        setEditingPriority(false);
+                      }
+                    }}
+                  >
+                    {prioritySaving ? 'Salvando...' : 'Salvar'}
+                  </Button>
+                )}
+                {editingPriority && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingPriority(false)}
+                  >
+                    Cancelar
+                  </Button>
+                )}
+              </div>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">Urgência</label>
-              <p>{ticket.urgencia}</p>
+              {editingPriority ? (
+                <Select value={editUrgencia} onValueChange={setEditUrgencia}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="baixa">Baixa</SelectItem>
+                    <SelectItem value="media">Média</SelectItem>
+                    <SelectItem value="alta">Alta</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p>{ticket.urgencia}</p>
+              )}
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">Impacto</label>
-              <p>{ticket.impacto}</p>
+              {editingPriority ? (
+                <Select value={editImpacto} onValueChange={setEditImpacto}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="local">Local</SelectItem>
+                    <SelectItem value="setor">Setor</SelectItem>
+                    <SelectItem value="massa">Massa</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <p>{ticket.impacto}</p>
+              )}
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">Origem</label>
@@ -145,6 +247,44 @@ export function ChamadoDetailPage() {
             <h3 className="font-medium mb-2">Descrição</h3>
             <p className="whitespace-pre-wrap">{ticket.descricao}</p>
           </div>
+
+          {ticket.novo_acesso && (
+            <div className="border-t pt-4">
+              <h3 className="font-medium mb-2">Dados do novo acesso</h3>
+              <div className="grid grid-cols-2 gap-4">
+                {ticket.novo_acesso.nome && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Nome</label>
+                    <p>{ticket.novo_acesso.nome}</p>
+                  </div>
+                )}
+                {ticket.novo_acesso.login && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Login</label>
+                    <p>{ticket.novo_acesso.login}</p>
+                  </div>
+                )}
+                {ticket.novo_acesso.email && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">E-mail</label>
+                    <p>{ticket.novo_acesso.email}</p>
+                  </div>
+                )}
+                {ticket.novo_acesso.cargo && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Cargo</label>
+                    <p>{ticket.novo_acesso.cargo}</p>
+                  </div>
+                )}
+                {ticket.novo_acesso.area && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Área</label>
+                    <p>{ticket.novo_acesso.area}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
