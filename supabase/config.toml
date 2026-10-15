@@ -2,3 +2,9 @@ project_id = "anzxlimjfuosygtuhaob"
 
 [functions.enviar-solicitacao]
 verify_jwt = false
+
+[functions.criar-chamado]
+verify_jwt = false
+
+[functions.notificar-chamado]
+verify_jwt = true
