@@ -135,3 +135,70 @@ Os testes ficam em [src/test/](src/test/) e usam **Vitest** + **Testing Library*
 - [Supabase](https://supabase.com/) SDK + Edge Functions (Deno)
 - [Vitest](https://vitest.dev/) + Testing Library
 - Lucide icons, Recharts, Sonner (toasts), date-fns, embla-carousel, next-themes
+
+## Backoffice de Chamados
+
+O backoffice oferece gestão de chamados (tickets) inspirada no GLPI: dashboard com KPIs, listagem com filtros, detalhe com timeline, workflow de status, atribuição a agentes, anexos e notificações por e-mail.
+
+### Rotas do backoffice
+
+| Rota | Descrição | Autenticação |
+|---|---|---|
+| `/login` | Login com e-mail + senha | Público |
+| `/backoffice/dashboard` | Dashboard com KPIs | Requer autenticação + perfil ativo |
+| `/backoffice/chamados` | Listagem de chamados com filtros | Requer autenticação |
+| `/backoffice/chamados/novo` | Criação manual de chamado | Requer autenticação |
+| `/backoffice/chamados/:id` | Detalhe do chamado | Requer autenticação |
+| `/backoffice/agentes` | Gestão de agentes (admin) | Requer role `admin` |
+
+### Contrato n8n → `criar-chamado`
+
+A Edge Function `criar-chamado` (verify_jwt=false) é invocada pelo workflow n8n para criar chamados automaticamente a partir do formulário público.
+
+**Endpoint:** `POST {{SUPABASE_URL}}/functions/v1/criar-chamado`
+
+**Autenticação:** Header `x-api-key: <CRIAR_CHAMADO_SECRET>`
+
+**Payload (JSON):**
+
+| Campo | Obrigatório | Descrição |
+|---|---|---|
+| `tipo` | Sim | `problema_tecnico`, `novo_acesso_individual`, `novo_acesso_lote` |
+| `solicitante.nome` | Sim | 1–100 caracteres |
+| `solicitante.email` | Sim | E-mail válido, máx. 255 |
+| `titulo` | Sim | 1–150 caracteres |
+| `descricao` | Sim | 20–5000 caracteres |
+| `cidade` | Não | Numérico, máx. 3 dígitos |
+| `mac` | Não | Formato MAC (`AA:BB:CC:DD:EE:FF`) |
+| `novo_acesso` | Não | Objeto com `{ nome, login, email, cargo, area }` |
+| `anexos` | Não | Array de referências a arquivos |
+| `chave_idempotencia` | Sim | UUID único da submissão (idempotência) |
+
+**Respostas:**
+- `201` — Chamado criado (`{ codigo, status, prioridade }`)
+- `200` — Chave de idempotência já processada (retorna chamado existente)
+- `400` — Campos obrigatórios faltando/ inválidos
+- `401` — Segredo ausente ou inválido
+
+**Valores padrão para chamados públicos:** urgência `media`, impacto `local` → prioridade `media`.
+
+### Primeiro admin (bootstrap)
+
+Conecte-se ao SQL Editor do Supabase e execute:
+
+```sql
+-- 1. Criar um auth user manualmente no Supabase Authentication
+-- 2. Inserir o perfil admin:
+insert into public.profiles (id, name, email, role, status)
+values ('<auth-user-id>', 'Admin', '<admin-email>', 'admin', 'active');
+```
+
+### Variáveis de ambiente
+
+| Variável | Obrigatória | Descrição |
+|---|---|---|
+| `CRIAR_CHAMADO_SECRET` | Sim | Segredo compartilhado para autenticação da Edge Function `criar-chamado` |
+| `RESEND_API_KEY` | Sim | Chave de API do Resend para envio de e-mails |
+| `RESEND_FROM_EMAIL` | Sim | E-mail remetente (domínio verificado no Resend) |
+| `RESEND_FROM_NAME` | Sim | Nome do remetente (ex: "BEON · Suporte") |
+| `APP_URL` | Sim | URL base da aplicação para links nos e-mails |
