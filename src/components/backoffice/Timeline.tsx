@@ -43,18 +43,18 @@ export function Timeline({ ticketId, followups }: TimelineProps) {
         {followups.length === 0 ? (
           <p className="text-muted-foreground text-sm">Nenhum evento registrado.</p>
         ) : (
-          <div className="relative space-y-4">
+          <div className="bo-timeline relative space-y-4">
             {followups.map((event, index) => (
               <div key={event.id} className="flex gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm">
+                  <div className="bo-timeline-node w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm">
                     {TIPO_ICONS[event.tipo] || '📌'}
                   </div>
                   {index < followups.length - 1 && (
-                    <div className="w-px flex-1 bg-border" />
+                    <div className="bo-timeline-rail w-px flex-1 bg-border" />
                   )}
                 </div>
-                <div className={`flex-1 pb-4 ${event.tipo === 'nota_interna' ? 'bg-yellow-50 p-3 rounded-md -ml-2' : ''}`}>
+                <div className={`flex-1 pb-4 ${event.tipo === 'nota_interna' ? 'bg-muted p-3 rounded-md -ml-2 border-l-2 border-primary' : ''}`}>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium">
                       {TIPO_LABELS[event.tipo] || event.tipo}

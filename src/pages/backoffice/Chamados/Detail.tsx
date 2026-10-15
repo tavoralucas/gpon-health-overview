@@ -14,6 +14,7 @@ import { Timeline } from '@/components/backoffice/Timeline';
 import { AttachmentList } from '@/components/backoffice/AttachmentList';
 import { AttachmentDropzone } from '@/components/backoffice/AttachmentDropzone';
 import {
+import { LoadingRows } from '@/components/effects/Connectivity';
   Select,
   SelectContent,
   SelectItem,
@@ -66,7 +67,7 @@ export function ChamadoDetailPage() {
   const [prioritySaving, setPrioritySaving] = useState(false);
 
   if (isLoading) {
-    return <div className="text-center py-8">Carregando...</div>;
+    return <LoadingRows rows={5} />;
   }
 
   if (error || !ticket) {

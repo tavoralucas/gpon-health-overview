@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
+import { CircuitState, LoadingRows } from '@/components/effects/Connectivity';
   Select,
   SelectContent,
   SelectItem,
@@ -286,12 +287,12 @@ export function ChamadosListPage() {
       <Card>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-center text-muted-foreground">Carregando...</div>
+            <LoadingRows />
           ) : error ? (
-            <div className="p-6 text-center text-red-500">Erro ao carregar chamados</div>
+            <CircuitState tone="error" title="Erro ao carregar chamados" message="Tente novamente em instantes." />
           ) : data?.data && data.data.length > 0 ? (
             <>
-              <Table>
+              <Table className="bo-table">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Código</TableHead>
