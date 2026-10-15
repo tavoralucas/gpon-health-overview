@@ -288,6 +288,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_active_admin: { Args: { _uid: string }; Returns: boolean }
       next_chamado_numero: { Args: never; Returns: string }
     }
     Enums: {

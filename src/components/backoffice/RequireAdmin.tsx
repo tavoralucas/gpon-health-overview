@@ -29,7 +29,7 @@ export function RequireAdmin({ children }: { children: React.ReactNode }) {
         .from('profiles')
         .select('role')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (!cancelled) {
         setProfile(userProfile);

@@ -50,7 +50,7 @@ export function BackofficeLayout() {
         .from('profiles')
         .select('name, email, role')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
       setProfile(data);
       setLoading(false);
     }
