@@ -35,7 +35,7 @@ import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 
 const STATUS_OPTIONS = [
-  { value: '', label: 'Todos' },
+  { value: 'all', label: 'Todos' },
   { value: 'novo', label: 'Novo' },
   { value: 'atribuido', label: 'Atribuído' },
   { value: 'atendimento', label: 'Em atendimento' },
@@ -46,7 +46,7 @@ const STATUS_OPTIONS = [
 ];
 
 const PRIORIDADE_OPTIONS = [
-  { value: '', label: 'Todas' },
+  { value: 'all', label: 'Todas' },
   { value: 'baixa', label: 'Baixa' },
   { value: 'media', label: 'Média' },
   { value: 'alta', label: 'Alta' },
@@ -54,14 +54,14 @@ const PRIORIDADE_OPTIONS = [
 ];
 
 const TIPO_OPTIONS = [
-  { value: '', label: 'Todos' },
+  { value: 'all', label: 'Todos' },
   { value: 'problema_tecnico', label: 'Problema Técnico' },
   { value: 'novo_acesso_individual', label: 'Novo Acesso Individual' },
   { value: 'novo_acesso_lote', label: 'Novo Acesso em Lote' },
 ];
 
 const ORIGEM_OPTIONS = [
-  { value: '', label: 'Todas' },
+  { value: 'all', label: 'Todas' },
   { value: 'publico', label: 'Público' },
   { value: 'manual', label: 'Manual' },
 ];
@@ -97,7 +97,7 @@ export function ChamadosListPage() {
   const { data, isLoading, error } = useTickets(filters);
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value || undefined, page: 1 }));
+    setFilters((prev) => ({ ...prev, [key]: value && value !== 'all' ? value : undefined, page: 1 }));
   };
 
   const handleSearch = () => {
@@ -143,7 +143,7 @@ export function ChamadosListPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium">Status</label>
               <Select
-                value={filters.status || ''}
+                value={filters.status || 'all'}
                 onValueChange={(v) => handleFilterChange('status', v)}
               >
                 <SelectTrigger className="w-[160px]">
@@ -162,7 +162,7 @@ export function ChamadosListPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium">Prioridade</label>
               <Select
-                value={filters.prioridade || ''}
+                value={filters.prioridade || 'all'}
                 onValueChange={(v) => handleFilterChange('prioridade', v)}
               >
                 <SelectTrigger className="w-[160px]">
@@ -181,7 +181,7 @@ export function ChamadosListPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium">Tipo</label>
               <Select
-                value={filters.tipo || ''}
+                value={filters.tipo || 'all'}
                 onValueChange={(v) => handleFilterChange('tipo', v)}
               >
                 <SelectTrigger className="w-[180px]">
@@ -200,7 +200,7 @@ export function ChamadosListPage() {
             <div className="space-y-1">
               <label className="text-sm font-medium">Origem</label>
               <Select
-                value={filters.origem || ''}
+                value={filters.origem || 'all'}
                 onValueChange={(v) => handleFilterChange('origem', v)}
               >
                 <SelectTrigger className="w-[140px]">
