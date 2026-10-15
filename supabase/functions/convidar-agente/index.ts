@@ -1,11 +1,13 @@
 // T-024a: Edge Function convidar-agente — invite agent via Admin API
 // verify_jwt = true (called from frontend by authenticated admin)
+// Uses supabase.auth.admin.inviteUserByEmail() which sends the invite email automatically
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.97.0';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+const APP_URL = Deno.env.get('APP_URL') || 'http://localhost:8080';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -24,28 +26,28 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // 1. Create auth user with a temporary password
-    const tempPassword = crypto.randomUUID().slice(0, 16);
-    const { data: authUser, error: createError } = await supabase.auth.admin.createUser({
+    // 1. Invite user via Supabase Admin API — sends invite email automatically
+    const { data: inviteData, error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
       email,
-      password: tempPassword,
-      email_confirm: true,
-      user_metadata: { name },
-    });
+      {
+        data: { name },
+        redirect_to: `${APP_URL}/backoffice/login`,
+      }
+    );
 
-    if (createError || !authUser.user) {
-      console.error('Erro ao criar usuário auth:', createError);
+    if (inviteError || !inviteData.user) {
+      console.error('Erro ao convidar usuário:', inviteError);
       return new Response(
-        JSON.stringify({ error: 'Falha ao criar usuário: ' + (createError?.message || 'erro desconhecido') }),
+        JSON.stringify({ error: 'Falha ao convidar usuário: ' + (inviteError?.message || 'erro desconhecido') }),
         { status: 500 }
       );
     }
 
-    // 2. Insert profile with the real auth user id
+    // 2. Insert profile with the real auth user id (status pending — activated on first login)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .insert({
-        id: authUser.user.id,
+        id: inviteData.user.id,
         name,
         email,
         role: 'agente',
@@ -57,7 +59,7 @@ serve(async (req) => {
     if (profileError) {
       console.error('Erro ao criar profile:', profileError);
       // Clean up auth user if profile insert fails
-      await supabase.auth.admin.deleteUser(authUser.user.id);
+      await supabase.auth.admin.deleteUser(inviteData.user.id);
       return new Response(
         JSON.stringify({ error: 'Falha ao criar perfil: ' + profileError.message }),
         { status: 500 }
