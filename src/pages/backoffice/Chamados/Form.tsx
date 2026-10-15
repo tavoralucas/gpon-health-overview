@@ -475,8 +475,8 @@ export function ChamadoFormPage() {
           </Card>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={createTicket.isLoading}>
-              {createTicket.isLoading ? 'Salvando...' : 'Criar Chamado'}
+            <Button type="submit" disabled={createTicket.isPending}>
+              {createTicket.isPending ? 'Salvando...' : 'Criar Chamado'}
             </Button>
             <Button
               type="button"
