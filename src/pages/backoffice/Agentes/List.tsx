@@ -101,8 +101,8 @@ export function AgentesPage() {
                 required
               />
             </div>
-            <Button type="submit" disabled={inviteAgente.isLoading}>
-              {inviteAgente.isLoading ? 'Convidando...' : 'Convidar'}
+            <Button type="submit" disabled={inviteAgente.isPending}>
+              {inviteAgente.isPending ? 'Convidando...' : 'Convidar'}
             </Button>
           </form>
         </CardContent>

@@ -139,7 +139,7 @@ describe("criarChamadoPayloadSchema — validação de formato", () => {
   it("rejeita tipo inválido", () => {
     const result = criarChamadoPayloadSchema.safeParse({
       ...PAYLOAD_VALIDO,
-      // @ts-expect-error — tipo inválido intencional
+      // @ts-ignore — tipo inválido intencional
       tipo: "tipo_invalido",
     });
     expect(result.success).toBe(false);

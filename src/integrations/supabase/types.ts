@@ -1,6 +1,3 @@
-// T-005: Types for backoffice tables
-// Extends the Database type with profiles, tickets, ticket_followups, ticket_attachments
-
 export type Json =
   | string
   | number
@@ -10,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.15"
   }
@@ -76,111 +75,196 @@ export type Database = {
       }
       profiles: {
         Row: {
+          created_at: string
+          email: string
           id: string
           name: string
-          email: string
-          role: 'agente' | 'admin'
-          status: 'pending' | 'active' | 'disabled'
-          created_at: string
+          role: string
+          status: string
           updated_at: string
         }
         Insert: {
+          created_at?: string
+          email: string
           id: string
           name: string
-          email: string
-          role?: 'agente' | 'admin'
-          status?: 'pending' | 'active' | 'disabled'
-          created_at?: string
+          role?: string
+          status?: string
           updated_at?: string
         }
         Update: {
+          created_at?: string
+          email?: string
           id?: string
           name?: string
-          email?: string
-          role?: 'agente' | 'admin'
-          status?: 'pending' | 'active' | 'disabled'
-          created_at?: string
+          role?: string
+          status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      ticket_attachments: {
+        Row: {
+          content_type: string
+          created_at: string
+          id: string
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes: number
+          ticket_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          content_type: string
+          created_at?: string
+          id?: string
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes: number
+          ticket_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          id?: string
+          nome_arquivo?: string
+          storage_path?: string
+          tamanho_bytes?: number
+          ticket_id?: string
+          uploaded_by?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
+            foreignKeyName: "ticket_attachments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_followups: {
+        Row: {
+          autor: string | null
+          conteudo: string
+          created_at: string
+          id: string
+          ticket_id: string
+          tipo: string
+        }
+        Insert: {
+          autor?: string | null
+          conteudo: string
+          created_at?: string
+          id?: string
+          ticket_id: string
+          tipo: string
+        }
+        Update: {
+          autor?: string | null
+          conteudo?: string
+          created_at?: string
+          id?: string
+          ticket_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_followups_autor_fkey"
+            columns: ["autor"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_followups_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
             referencedColumns: ["id"]
           },
         ]
       }
       tickets: {
         Row: {
-          id: string
-          numero: string
-          titulo: string
-          descricao: string
-          tipo: 'problema_tecnico' | 'novo_acesso_individual' | 'novo_acesso_lote'
-          origem: 'publico' | 'manual'
-          solicitante_nome: string
-          solicitante_email: string
-          codigo_cidade: string | null
-          endereco_mac: string | null
-          urgencia: 'baixa' | 'media' | 'alta'
-          impacto: 'local' | 'setor' | 'massa'
-          prioridade: 'baixa' | 'media' | 'alta' | 'critica'
-          status: 'novo' | 'atribuido' | 'atendimento' | 'espera' | 'resolvido' | 'fechado' | 'reaberto'
           atribuido_a: string | null
-          criado_por: string | null
           chave_idempotencia: string | null
-          resolvido_em: string | null
-          fechado_em: string | null
+          codigo_cidade: string | null
           created_at: string
+          criado_por: string | null
+          descricao: string
+          endereco_mac: string | null
+          fechado_em: string | null
+          id: string
+          impacto: string
+          novo_acesso: Json | null
+          numero: string
+          origem: string
+          prioridade: string
+          resolvido_em: string | null
+          solicitante_email: string
+          solicitante_nome: string
+          status: string
+          tipo: string
+          titulo: string
           updated_at: string
+          urgencia: string
         }
         Insert: {
-          id?: string
-          numero: string
-          titulo: string
-          descricao: string
-          tipo: 'problema_tecnico' | 'novo_acesso_individual' | 'novo_acesso_lote'
-          origem: 'publico' | 'manual'
-          solicitante_nome: string
-          solicitante_email: string
-          codigo_cidade?: string | null
-          endereco_mac?: string | null
-          urgencia: 'baixa' | 'media' | 'alta'
-          impacto: 'local' | 'setor' | 'massa'
-          prioridade: 'baixa' | 'media' | 'alta' | 'critica'
-          status?: 'novo' | 'atribuido' | 'atendimento' | 'espera' | 'resolvido' | 'fechado' | 'reaberto'
           atribuido_a?: string | null
-          criado_por?: string | null
           chave_idempotencia?: string | null
-          resolvido_em?: string | null
-          fechado_em?: string | null
+          codigo_cidade?: string | null
           created_at?: string
+          criado_por?: string | null
+          descricao: string
+          endereco_mac?: string | null
+          fechado_em?: string | null
+          id?: string
+          impacto: string
+          novo_acesso?: Json | null
+          numero: string
+          origem: string
+          prioridade: string
+          resolvido_em?: string | null
+          solicitante_email: string
+          solicitante_nome: string
+          status?: string
+          tipo: string
+          titulo: string
           updated_at?: string
+          urgencia: string
         }
         Update: {
-          id?: string
-          numero?: string
-          titulo?: string
-          descricao?: string
-          tipo?: 'problema_tecnico' | 'novo_acesso_individual' | 'novo_acesso_lote'
-          origem?: 'publico' | 'manual'
-          solicitante_nome?: string
-          solicitante_email?: string
-          codigo_cidade?: string | null
-          endereco_mac?: string | null
-          urgencia?: 'baixa' | 'media' | 'alta'
-          impacto?: 'local' | 'setor' | 'massa'
-          prioridade?: 'baixa' | 'media' | 'alta' | 'critica'
-          status?: 'novo' | 'atribuido' | 'atendimento' | 'espera' | 'resolvido' | 'fechado' | 'reaberto'
           atribuido_a?: string | null
-          criado_por?: string | null
           chave_idempotencia?: string | null
-          resolvido_em?: string | null
-          fechado_em?: string | null
+          codigo_cidade?: string | null
           created_at?: string
+          criado_por?: string | null
+          descricao?: string
+          endereco_mac?: string | null
+          fechado_em?: string | null
+          id?: string
+          impacto?: string
+          novo_acesso?: Json | null
+          numero?: string
+          origem?: string
+          prioridade?: string
+          resolvido_em?: string | null
+          solicitante_email?: string
+          solicitante_nome?: string
+          status?: string
+          tipo?: string
+          titulo?: string
           updated_at?: string
+          urgencia?: string
         }
         Relationships: [
           {
@@ -199,88 +283,12 @@ export type Database = {
           },
         ]
       }
-      ticket_followups: {
-        Row: {
-          id: string
-          ticket_id: string
-          tipo: 'followup_publico' | 'nota_interna' | 'status_change' | 'assignment' | 'system'
-          conteudo: string
-          autor: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          ticket_id: string
-          tipo: 'followup_publico' | 'nota_interna' | 'status_change' | 'assignment' | 'system'
-          conteudo: string
-          autor?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          ticket_id?: string
-          tipo?: 'followup_publico' | 'nota_interna' | 'status_change' | 'assignment' | 'system'
-          conteudo?: string
-          autor?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ticket_followups_ticket_id_fkey"
-            columns: ["ticket_id"]
-            isOneToOne: false
-            referencedRelation: "tickets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ticket_attachments: {
-        Row: {
-          id: string
-          ticket_id: string
-          storage_path: string
-          nome_arquivo: string
-          tamanho_bytes: number
-          content_type: string
-          uploaded_by: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          ticket_id: string
-          storage_path: string
-          nome_arquivo: string
-          tamanho_bytes: number
-          content_type: string
-          uploaded_by?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          ticket_id?: string
-          storage_path?: string
-          nome_arquivo?: string
-          tamanho_bytes?: number
-          content_type?: string
-          uploaded_by?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ticket_attachments_ticket_id_fkey"
-            columns: ["ticket_id"]
-            isOneToOne: false
-            referencedRelation: "tickets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      next_chamado_numero: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never

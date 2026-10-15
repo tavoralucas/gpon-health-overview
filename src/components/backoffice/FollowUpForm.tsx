@@ -72,8 +72,8 @@ export function FollowUpForm({ ticketId }: FollowUpFormProps) {
             />
           </div>
 
-          <Button type="submit" disabled={createFollowup.isLoading || !conteudo.trim()}>
-            {createFollowup.isLoading ? 'Salvando...' : 'Adicionar'}
+          <Button type="submit" disabled={createFollowup.isPending || !conteudo.trim()}>
+            {createFollowup.isPending ? 'Salvando...' : 'Adicionar'}
           </Button>
         </form>
       </CardContent>
